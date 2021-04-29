@@ -9,7 +9,9 @@ const defaultState = fromJS({
   //这里是当前页数，我们即将实现分页功能
   pageCount: 0,
   bottomLoading: false,
-  topLoading: false
+  topLoading: false,
+  alpha: '',
+  category: ''
 });
 
 export default (state = defaultState, action) => {
@@ -24,6 +26,10 @@ export default (state = defaultState, action) => {
       return state.set('bottomLoading', action.data);
     case actionTypes.TOP_LOADING:
       return state.set('topLoading', action.data);
+    case actionTypes.ALPHA:
+      return state.set('alpha', action.data);
+    case actionTypes.CATEGORY:
+      return state.set('category', action.data);
     default:
       return state;
   }

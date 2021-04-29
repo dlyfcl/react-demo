@@ -196,3 +196,36 @@ useMemo是针对一个函数是否多次执行
 
 使用：
 如果useMemo(fn, arr)第二个参数匹配，并且其值发生改变，才会多次执行执行，否则只执行一次，如果为空数组[]，fn只执行一次
+
+## useContext
+作用：接收一个context对象并返回该context的值，当前context值由上一层组件中距离当前组件最近的value props决定，主要作用是组件之间传值。
+
+1.首先要进行导入createContext,useContext
+import React,{useState,createContext,useContext} from 'react'
+function Child(){
+//在子组件中使用useContext进行接收父组件传递的上下文，这样值就能传递过来了
+    const count1=useContext(CountContext)
+    return (
+        <h1>{count1}</h1>
+    )
+}
+const CountContext=createContext()//首先创建一个上下文全局变量
+function Example3(){
+    const [count,setCount]=useState(0)
+
+    function handleClick(){
+        setCount(count+1)
+    }
+   
+    return (
+        <div>
+            点击{count}
+            <button onClick={handleClick}>clickme</button>
+            其次是作为父组件将值传递过去，Provider 相当于提供者，Child是子组件
+            <CountContext.Provider value={count}>
+                <Child></Child>
+            </CountContext.Provider>
+        </div>
+    )
+}
+export default Example3

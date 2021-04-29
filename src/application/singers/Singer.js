@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Horizen from '../../components/horizen/horizen';
 import { NavContainer, ListContainer, ListItem, List } from "./style";
 import { categoryTypes, alphaTypes } from '../../api/singerData'
@@ -14,11 +14,11 @@ import LazyLoad, { forceCheck } from "react-lazyload";
 
 function Singer(props) {
     // 数据
-    const { singerList, pageCount, enterLoading, bottomLoading, topLoading } = props;
+    const { singerList, pageCount, enterLoading, bottomLoading, topLoading, alpha, category } = props;
     // 函数
-    const { getHotDataDispatch, updateDispatch, pullUpRefreshDispatch, pullDownRefreshDispatch } = props;
-    let [category, setCategory] = useState('');
-    let [alpha, setAlpha] = useState('');
+    const { getHotDataDispatch, updateDispatch, pullUpRefreshDispatch, pullDownRefreshDispatch, updateAlpha, updateCategory } = props;
+    // let [category, setCategory] = useState('');
+    // let [alpha, setAlpha] = useState('');
     useEffect(() => {
         if (!singerList.size) {
             getHotDataDispatch();
@@ -26,17 +26,19 @@ function Singer(props) {
     }, []);
 
     const categoryClick = (val) => {
-        setCategory(val.key);
+        // setCategory(val.key);
+        updateCategory(val.key);
         updateDispatch(val.key, alpha);
     }
     const alphaClick = (val) => {
-        setAlpha(val.key);
+        // setAlpha(val.key);
+        updateAlpha(val.key);
         updateDispatch(category, val.key);
     }
 
     // 滑倒底部上拉加载更多
     const handlePullUp = () => {
-        pullUpRefreshDispatch(category, alpha, category === '' && alpha === '', pageCount);
+        pullUpRefreshDispatch(category, alpha, !category && !alpha, pageCount);
     };
 
     // 顶部下拉刷新
@@ -91,6 +93,8 @@ const mapStateToProps = (state) => ({
     pageCount: state.getIn(['singer', 'pageCount']),
     bottomLoading: state.getIn(['singer', 'bottomLoading']),
     topLoading: state.getIn(['singer', 'topLoading']),
+    alpha: state.getIn(['singer', 'alpha']),
+    category: state.getIn(['singer', 'category']),
 })
 
 const mapDispatchToProps = (dispatch) => {
@@ -123,6 +127,12 @@ const mapDispatchToProps = (dispatch) => {
             } else {
                 dispatch(actionTypes.getListData(category, alpha));
             }
+        },
+        updateAlpha(alpha) {
+            dispatch(actionTypes.changeAlpha(alpha));
+        },
+        updateCategory(category) {
+            dispatch(actionTypes.changeCategory(category));
         }
     }
 }

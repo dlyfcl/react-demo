@@ -8,3 +8,7 @@ export const PAGE_COUNT = 'singers/PAGE_COUNT';
 export const BOTTOM_LOADING = 'singers/BOTTOM_LOADING';
 // 滑动到最顶部的loading
 export const TOP_LOADING = 'singers/TOP_LOADING';
+// 分类标签
+export const CATEGORY = 'singer/CATEGORY';
+// 首字母
+export const ALPHA = 'singer/ALPHA';

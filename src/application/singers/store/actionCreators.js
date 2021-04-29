@@ -39,6 +39,18 @@ export const changeTopLoading = (data) => ({
   data
 });
 
+// 改变首字母
+export const changeAlpha = (data) => ({
+  type: actionTypes.ALPHA,
+  data
+});
+
+// 改变分类标签
+export const changeCategory = (data) => ({
+  type: actionTypes.CATEGORY,
+  data
+});
+
 export const getHotData = () => {
   return (dispatch) => {
     getHotSingerListRequest(0).then(data => {
