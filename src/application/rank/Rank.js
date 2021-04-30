@@ -29,11 +29,12 @@ function Rank(props) {
             </SongList>
         ) : null;
     }
+    const displayStyle = loading ? {"display":"none"}:  {"display": ""};
     return (
         <RankContainer>
             <Scroll direction={'vertical'}>
                 <div>
-                    <span className="title"> 官方榜 </span>
+                    <span className="title" style={displayStyle}> 官方榜 </span>
                     <TopContainer>
                         {
                             officialList.map((item) => {
@@ -50,7 +51,7 @@ function Rank(props) {
                             })
                         }
                     </TopContainer>
-                    <span className="title"> 全球榜 </span>
+                    <span className="title" style={displayStyle}> 全球榜 </span>
                     <BottomContainer>
                         {
                             globalList.map((item) => {
@@ -67,6 +68,7 @@ function Rank(props) {
                         }
                     </BottomContainer>
                 </div>
+                {loading ? <Loading></Loading> : null}
             </Scroll>
 
         </RankContainer>
