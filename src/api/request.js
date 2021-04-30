@@ -20,8 +20,15 @@ export const getHotSingerListRequest = (count) => {
  * 根据条件获取歌手
  * @param {cat} category 歌手的分类
  * @param {initial} alpha 首字母 
- * @param {count}  分页
+ * @param {count}  分页偏移量
  */
 export const getSingerListRequest = (category, alpha, count) => {
   return axiosInstance.get(`/artist/list?cat=${category}&initial=${alpha.toLowerCase()}&offset=${count}`);
 }
+
+/**
+ * 获取排行榜的内容
+ */
+export const getRankListRequest = () => {
+  return axiosInstance.get (`/toplist/detail`);
+};

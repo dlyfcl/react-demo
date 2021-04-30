@@ -8,8 +8,6 @@ import { HashRouter } from 'react-router-dom';
 // 注入store
 import { Provider } from 'react-redux'
 import store from './store/index'
-// 使用useContext实现redux功能
-import { Data } from './application/singers/data'
 
 function App() {
     return (
@@ -17,9 +15,7 @@ function App() {
             <HashRouter>
                 <GlobalStyle></GlobalStyle>
                 <IconStyle></IconStyle>
-                <Data>
-                    {renderRoutes(routes)}
-                </Data>
+                {renderRoutes(routes)}
             </HashRouter>
         </Provider>
     );

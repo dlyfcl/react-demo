@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import Horizen from '../../components/horizen/horizen';
 import { NavContainer, ListContainer, ListItem, List } from "./style";
 import { categoryTypes, alphaTypes } from '../../api/singerData'

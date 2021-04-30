@@ -22,3 +22,10 @@ export const debounce = (func, delay) => {
     }, delay);
   }
 }
+
+export const arrayFilter = (arr, flag) => {
+  return arr.filter(e => {
+    if (flag) return e.tracks.length > 0
+    return e.tracks.length === 0
+  })
+}
