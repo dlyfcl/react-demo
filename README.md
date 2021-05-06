@@ -229,3 +229,19 @@ function Example3(){
     )
 }
 export default Example3
+
+## 当路由有子路由的时候
+
+1.设置跳转子路由props.history.push (`/recommend/${id}`)
+
+如果是在组建中跳转，会失败，是因为拿不到history，可以将history传递给子组件，也可以使用withRouter 来包裹组件（需要引入import { withRouter } from 'react-router-dom';）。
+
+2.路由变化之后发现子路由没有渲染，因为renderRoutes方法。这个方法中传入参数为路由配置数组，我们在组件中调用这个方法后只能渲染一层路由，再深层的路由就无法渲染。所以在需要渲染子路由的组件下面加上下面逻辑
+import { renderRoutes } from 'react-router-config';
+
+// 返回的 JSX
+<div>
+  // 其他代码
+  // 将目前所在路由的下一层子路由加以渲染
+  { renderRoutes (props.route.routes) } // routes是在路由文件中定义的包裹子路由的key，默认就是routes不是children
+</div>

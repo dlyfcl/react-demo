@@ -11,6 +11,7 @@ import * as actionTypes from './store/actionCreators';
 import { forceCheck } from 'react-lazyload';
 // loading
 import Loading from '../../components/loading/loading';
+import { renderRoutes } from 'react-router-config';
 
 
 function Recommend(props) {
@@ -28,7 +29,6 @@ function Recommend(props) {
     }, []);
     const bannerListJS = bannerList ? bannerList.toJS() : [];
     const recommendListJS = recommendList ? recommendList.toJS() : [];
-
     return (
         <Content>
             {enterLoading ? <Loading></Loading> : null}
@@ -39,6 +39,7 @@ function Recommend(props) {
                     <RecommendList recommendList={recommendListJS}></RecommendList>
                 </div>
             </Scroll>
+            {renderRoutes(props.route.routes)}
         </Content>
     )
 }

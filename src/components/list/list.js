@@ -6,10 +6,16 @@ import {
 } from './style';
 import { getCount } from '../../api/utils'
 import LazyLoad from "react-lazyload";
+// 将组件用 withRouter 包裹 使其可以使用路由跳转
+import { withRouter } from 'react-router-dom';
 
 
 function RecommendList(props) {
   const { recommendList } = props;
+
+  const enterDetail = (id) => {
+    props.history.push (`/recommend/${id}`)
+  }
   return (
     <ListWrapper>
       <h1 className="title"> 推荐歌单 </h1>
@@ -17,7 +23,7 @@ function RecommendList(props) {
         {
           recommendList.map(item => {
             return (
-              <ListItem key={item.id}>
+              <ListItem key={item.id} onClick={() => enterDetail(item.id)}>
                 <div className="img_wrapper">
                   <div className="decorate"></div>
                   {/* 加此参数可以减小请求的图片资源大小 */}
@@ -40,4 +46,4 @@ function RecommendList(props) {
   )
 }
 
-export default React.memo(RecommendList);
+export default React.memo(withRouter(RecommendList));
