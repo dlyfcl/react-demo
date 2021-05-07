@@ -143,7 +143,8 @@ const Profile = forwardRef((props,ref) => {
 App.js
 const App = () => {
     printRef(){
-        console.log(this.profileRef.current)  // <h2 ref={ref}>Profile</h2>
+        console.log(this.profileRef.current)  
+        // <h2 ref={ref}>Profile</h2>
     }
     return (
       <div>
@@ -245,3 +246,26 @@ import { renderRoutes } from 'react-router-config';
   // 将目前所在路由的下一层子路由加以渲染
   { renderRoutes (props.route.routes) } // routes是在路由文件中定义的包裹子路由的key，默认就是routes不是children
 </div>
+
+
+## CSS: filter: blur(); 
+实现高斯模糊效果，不可不知的细节优化 (0-20px)
+
+## marquee
+
+html标签 - 可以实现多种滚动效果，无需js控制。使用marquee标记不仅可以移动文字，也可以移动图片，表格等.只需要在<marquee></marquee>内部输入要滚动的内容即可。
+
+1、direction 表示滚动的方向，值可以是left，right，up，down，默认为left 
+2、behavior 表示滚动的方式，值可以是scroll(连续滚动)slide(滑动一次)alternate(来回滚动) 
+3、loop 表示循环的次数，值是正整数，默认为无限循环 
+4、scrollamount 表示运动速度，值是正整数，默认为6 
+5、scrolldelay 表示停顿时间，值是正整数，默认为0，单位是毫秒 
+6、align 表示元素的垂直对齐方式，值可以是top，middle，bottom，默认为middle 
+7、bgcolor 表示运动区域的背景色，值是16进制的RGB颜色，默认为白色 
+8、height、width 表示运动区域的高度和宽度，值是正整数(单位是像素)或百分数，默认width=100% height为标签内元素的高度。 
+9、hspace、vspace 表示元素到区域边界的水平距离和垂直距离，值是正整数，单位是像素。 
+10、οnmοuseοver=this.stop() οnmοuseοut=this.start() 表示当鼠标以上区域的时候滚动停止，当鼠标移开的时候又继续滚动。
+
+## useCallback
+
+使用场景是：有一个父组件，其中包含子组件，子组件接收一个函数作为props；通常而言，如果父组件更新了，子组件也会执行更新；但是大多数场景下，更新是没有必要的，我们可以借助useCallback来返回函数，然后把这个函数作为props传递给子组件；这样，子组件就能避免不必要的更新。
