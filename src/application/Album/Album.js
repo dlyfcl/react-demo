@@ -19,16 +19,25 @@ const Album = (props) => {
   }, [id]);
   const currentAlbum = data ? data.toJS() : {};
   const [showStatus, setShowStatus] = useState(true);
-  const handleBack = () => {
-    setShowStatus(false);
-  };
   // 标题
   const [title, setTitle] = useState("歌单");
   // 是否跑马灯
   const [isMarquee, setIsMarquee] = useState(false);
   const headEl = useRef();
   const headerHeight = 45;
-  const handleScroll = (pos) => {
+  /**
+   * 将传递给子组件的函数使用useCallback包裹
+   * 如果不使用useCallback包裹，那么父组件每次执行都会形成不同的函数引用
+   * 那么子组件每一次memo的结果都会不一样，导致不必要的渲染
+   * 同useEffect一样，useCallback的第二个参数是用于比较memo的上下文中对应值是否变化，
+   * 如果有变化则会重新声明回调函数。
+   * 如果这个参数为空数组，则只会在component挂载时运行。
+   * 如果不存在这个参数，则会在每次渲染时运行。
+   */
+  const handleBack = useCallback(() => {
+    setShowStatus(false);
+  }, []);
+  const handleScroll = useCallback((pos) => {
     const percent = Math.abs(pos.y / headerHeight);
     let headerDom = headEl.current;
     if (pos.y < -headerHeight) {
@@ -42,7 +51,7 @@ const Album = (props) => {
       setIsMarquee(false);
       setTitle('歌单');
     }
-  };
+  }, [currentAlbum])
 
   const menuRender = () => {
     return (
@@ -134,20 +143,24 @@ const Album = (props) => {
       unmountOnExit
       onExited={props.history.goBack}>
       <Container>
-        <Header title={title} isMarquee={isMarquee} handleClick={handleBack} ref={headEl}>
+        <Header
+          title={title}
+          isMarquee={isMarquee}
+          handleClick={handleBack}
+          ref={headEl}>
         </Header>
         {
           Object.keys(currentAlbum).length === 0 ? null : (
             <Scroll onScroll={handleScroll} bounceTop={false}>
               <div>
-                { topDescRender() }
-                { menuRender() }
-                { songListRender() }
+                {topDescRender()}
+                {menuRender()}
+                {songListRender()}
               </div>
             </Scroll>
           )
         }
-        { loading ? <Loading></Loading> : null}
+        {loading ? <Loading></Loading> : null}
       </Container>
     </CSSTransition>
   )
