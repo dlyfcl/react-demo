@@ -4,7 +4,8 @@ import { getRankList } from './store/index';
 import { connect } from 'react-redux';
 import { arrayFilter } from '../../api/utils';
 import Scroll from '../../components/scroll/scroll';
-import Loading from '../../components/loading/loading';
+// import Loading from '../../components/loading/loading';
+import { renderRoutes } from 'react-router-config';
 
 function Rank(props) {
     const { rankList, loading } = props;
@@ -29,6 +30,9 @@ function Rank(props) {
             </SongList>
         ) : null;
     }
+    const enterDetail = (item) => {
+        props.history.push(`/rank/${item.id}`);
+    }
     return (
         <RankContainer>
             <Scroll direction={'vertical'}>
@@ -38,7 +42,7 @@ function Rank(props) {
                         {
                             officialList.map((item) => {
                                 return (
-                                    <TopItem key={item.coverImgId} tracks={item.tracks}>
+                                    <TopItem key={item.coverImgId} tracks={item.tracks} onClick={() => enterDetail(item)}>
                                         <div className="img_wrapper">
                                             <img src={item.coverImgUrl} alt="" />
                                             <div className="decorate"></div>
@@ -68,7 +72,7 @@ function Rank(props) {
                     </BottomContainer>
                 </div>
             </Scroll>
-
+            {renderRoutes(props.route.routes)}
         </RankContainer>
     )
 }

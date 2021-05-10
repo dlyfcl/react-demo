@@ -9,7 +9,6 @@ import LazyLoad from "react-lazyload";
 // 将组件用 withRouter 包裹 使其可以使用路由跳转
 import { withRouter } from 'react-router-dom';
 
-
 function RecommendList(props) {
   const { recommendList } = props;
 
