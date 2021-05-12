@@ -2,7 +2,8 @@ import React from 'react';
 import { Redirect } from "react-router-dom";
 import Home from '../application/Home/home';
 import Recommend from '../application/recommend/Recommend';
-import Singers from '../application/singers/Singer';
+import Singers from '../application/singers/Singers';
+import Singer from '../application/singers/Singer';
 import Rank from '../application/rank/Rank';
 import Album from '../application/Album/Album'
 
@@ -30,7 +31,13 @@ export default [
       },
       {
         path: "/singers",
-        component: Singers
+        component: Singers,
+        routes: [
+          {
+            path: "/singers/:id",
+            component: Singer
+          }
+        ]
       },
       {
         path: "/rank",

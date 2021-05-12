@@ -1,140 +1,182 @@
-import React, { useEffect } from 'react';
-import Horizen from '../../components/horizen/horizen';
-import { NavContainer, ListContainer, ListItem, List } from "./style";
-import { categoryTypes, alphaTypes } from '../../api/singerData'
-import Scroll from '../../components/scroll/scroll'
-// better-scroll 的 (横向) 滚动原理，
-// 首先外面容器要宽度固定，其次内容宽度要大于容器宽度。
-// 连接redux
-import { connect } from "react-redux";
-import * as actionTypes from './store/actionCreators';
-// loading
-import Loading from '../../components/loading/loading';
-import LazyLoad, { forceCheck } from "react-lazyload";
+import React, { useState, useCallback, useRef } from 'react';
+import { CSSTransition } from 'react-transition-group';
+import { SingerContainer, ImgContainer, CollectButton, SongListWrapper } from './style';
+import Header from '../../components/Header/Header';
+import Scroll from '../../components/scroll/scroll';
+import SongsList from '../../components/songsList/songsList';
 
-function Singer(props) {
-    // 数据
-    const { singerList, pageCount, enterLoading, bottomLoading, topLoading, alpha, category } = props;
-    // 函数
-    const { getHotDataDispatch, updateDispatch, pullUpRefreshDispatch, pullDownRefreshDispatch, updateAlpha, updateCategory } = props;
-    // let [category, setCategory] = useState('');
-    // let [alpha, setAlpha] = useState('');
-    useEffect(() => {
-        if (!singerList.size) {
-            getHotDataDispatch();
+const Singer = (props) => {
+  const [showStatus, setShowStatus] = useState(true);
+  // 标题
+  const [title, setTitle] = useState("歌单");
+  // 是否跑马灯
+  const [isMarquee, setIsMarquee] = useState(false);
+  const handleBack = useCallback(() => {
+    setShowStatus(false);
+  }, []);
+  // mock数据
+  const artist = {
+    picUrl: "https://p2.music.126.net/W__FCWFiyq0JdPtuLJoZVQ==/109951163765026271.jpg",
+    name: "薛之谦",
+    hotSongs: [
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
         }
-    }, []);
-
-    const categoryClick = (val) => {
-        // setCategory(val.key);
-        updateCategory(val.key);
-        updateDispatch(val.key, alpha);
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+      {
+        name: "我好像在哪见过你",
+        ar: [{ name: "薛之谦" }],
+        al: {
+          name: "薛之谦专辑"
+        }
+      },
+    ]
+  }
+  const headEl = useRef();
+  const headerHeight = 45;
+  const handleScroll = useCallback((pos) => {
+    const percent = Math.abs(pos.y / headerHeight);
+    let headerDom = headEl.current;
+    if (pos.y < -headerHeight) {
+      headerDom.style.backgroundColor = "#fff";
+      headerDom.style.opacity = Math.min(1, (percent - 1));  // 透明度随滚动的高度慢慢变化
+    } else {
+      headerDom.style.backgroundColor = "";
+      headerDom.style.opacity = 1;
     }
-    const alphaClick = (val) => {
-        // setAlpha(val.key);
-        updateAlpha(val.key);
-        updateDispatch(category, val.key);
-    }
-
-    // 滑倒底部上拉加载更多
-    const handlePullUp = () => {
-        pullUpRefreshDispatch(category, alpha, !category && !alpha, pageCount);
-    };
-
-    // 顶部下拉刷新
-    const handlePullDown = () => {
-        pullDownRefreshDispatch(category, alpha)
-    }
-
-    const renderSingerList = () => {
-        const list = singerList ? singerList.toJS() : [];
-        return (
-            <List>
-                {
-                    list.map((item, index) => {
-                        return (
-                            <ListItem key={item.accountId + "" + index}>
-                                <div className="img_wrapper">
-                                    <LazyLoad placeholder={<img width="100%" height="100%" src={require('../../assets/singer.png')} alt="singer" />}>
-                                        <img src={`${item.picUrl}?param=300x300`} width="100%" height="100%" alt="singer" />
-                                    </LazyLoad>
-                                </div>
-                                <span className="name">{item.name}</span>
-                            </ListItem>
-                        )
-                    })
-                }
-            </List>
-        )
-    };
-    return (
-        <NavContainer>
-            <Horizen list={categoryTypes} title={'分类（默认热门）:'} oldVal={category} handleClick={categoryClick} ></Horizen>
-            <Horizen list={alphaTypes} title={'首字母:'} oldVal={alpha} handleClick={alphaClick} ></Horizen>
-            <ListContainer>
-                <Scroll direction={'vertical'}
-                    pullUp={handlePullUp}
-                    pullDown={handlePullDown}
-                    pullUpLoading={bottomLoading}
-                    pullDownLoading={topLoading}
-                    onScroll={forceCheck}
-                >
-                    {renderSingerList()}
-                </Scroll>
-                {enterLoading ? <Loading></Loading> : null}
-            </ListContainer>
-        </NavContainer>
-    )
+  }, [artist])
+  return (
+    <CSSTransition
+      in={showStatus}
+      timeout={300}
+      classNames="fly"
+      appear={true}
+      unmountOnExit
+      onExited={props.history.goBack}>
+      <SingerContainer>
+        <Header
+          title={artist.name}
+          isMarquee={false}
+          handleClick={handleBack}
+          ref={headEl}>
+        </Header>
+        <ImgContainer bgUrl={artist.picUrl}>
+          <div className="filter"></div>
+        </ImgContainer>
+        <CollectButton>
+          <i className="iconfont">&#xe62d;</i>
+          <span className="text"> 收藏 </span>
+        </CollectButton>
+        <SongListWrapper>
+          <Scroll>
+            <SongsList songs={artist.hotSongs} showCollect={false}>
+            </SongsList>
+          </Scroll>
+        </SongListWrapper>
+      </SingerContainer>
+    </CSSTransition>
+  )
 }
 
-const mapStateToProps = (state) => ({
-    singerList: state.getIn(['singer', 'singerList']),
-    enterLoading: state.getIn(['singer', 'enterLoading']),
-    pageCount: state.getIn(['singer', 'pageCount']),
-    bottomLoading: state.getIn(['singer', 'bottomLoading']),
-    topLoading: state.getIn(['singer', 'topLoading']),
-    alpha: state.getIn(['singer', 'alpha']),
-    category: state.getIn(['singer', 'category']),
-})
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        getHotDataDispatch() {
-            dispatch(actionTypes.changeEnterLoading(true));
-            dispatch(actionTypes.getHotData());
-        },
-        updateDispatch(category, alpha) {
-            dispatch(actionTypes.changePageCount(0));
-            dispatch(actionTypes.changeEnterLoading(true));
-            dispatch(actionTypes.getListData(category, alpha));
-        },
-        // 滑到最底部刷新部分的处理
-        pullUpRefreshDispatch(category, alpha, hot, count) {
-            dispatch(actionTypes.changeBottomLoading(true));
-            dispatch(actionTypes.changePageCount(count + 30));
-            if (hot) {
-                dispatch(actionTypes.getMoreHotSingerList());
-            } else {
-                dispatch(actionTypes.getMoreListData(category, alpha));
-            }
-        },
-        // 顶部下拉刷新
-        pullDownRefreshDispatch(category, alpha) {
-            dispatch(actionTypes.changeTopLoading(true));
-            dispatch(actionTypes.changePageCount(0));
-            if (!category && !alpha) {
-                dispatch(actionTypes.getHotData());
-            } else {
-                dispatch(actionTypes.getListData(category, alpha));
-            }
-        },
-        updateAlpha(alpha) {
-            dispatch(actionTypes.changeAlpha(alpha));
-        },
-        updateCategory(category) {
-            dispatch(actionTypes.changeCategory(category));
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Singer))
+export default React.memo(Singer);
