@@ -2,12 +2,12 @@ import React from 'react';
 import { SongList, SongItem } from './style';
 import { getCount, getName } from '../../api/utils'
 
-const SongsList = (props) => {
+const SongsList = React.forwardRef((props, ref) => {
   const list = (list) => {
     let res = [];
     list.forEach((e, index) => {
       res.push(
-        <li key={e.id}>
+        <li key={index}>
           <span className="index">{index + 1}</span>
           <div className="info">
             <span>{e.name}</span>
@@ -28,23 +28,23 @@ const SongsList = (props) => {
       </div>
     )
   }
-  
+
   const { collectCount, showCollect, songs } = props;
   const totalCount = songs.length;
   return (
-    <SongList>
+    <SongList ref={ref} showBackground={props.showBackground}>
       <div className="first_line">
         <div className="play_all">
           <i className="iconfont">&#xe6e3;</i>
           <span > 播放全部 <span className="sum">(共 {totalCount} 首)</span></span>
         </div>
-        { showCollect ? collect(collectCount) : null }
+        {showCollect ? collect(collectCount) : null}
       </div>
       <SongItem>
-        { list(songs) }
+        {list(songs)}
       </SongItem>
     </SongList>
   )
-}
+})
 
 export default React.memo(SongsList);
