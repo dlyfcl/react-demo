@@ -61,8 +61,56 @@ this.setState((state, props) => ({
 
 
 ## 单项数据流
-
 react的数据传递是单向的，传递过去无法修改
+
+## 为什么要在 React 中用 Immutable 数据流
+
+PureComponent 或者 memo 将会进行新旧数据的浅层比对, 他的浅层对比源码如下。共有四层判断。
+1、比较数据类型
+2、判断是否都是对象
+3、比较两个的属性数量
+4、比较键值对是否一样
+
+function shallowEqual (objA: mixed, objB: mixed): boolean {
+  // 下面的 is 相当于 === 的功能，只是对 + 0 和 - 0，以及 NaN 和 NaN 的情况进行了特殊处理
+  // 第一关：基础数据类型直接比较出结果
+  if (is (objA, objB)) {
+    return true;
+  }
+  // 第二关：只要有一个不是对象数据类型就返回 false
+  if (
+    typeof objA !== 'object' ||
+    objA === null ||
+    typeof objB !== 'object' ||
+    objB === null
+  ) {
+    return false;
+  }
+
+  // 第三关：在这里已经可以保证两个都是对象数据类型，比较两者的属性数量
+  const keysA = Object.keys (objA);
+  const keysB = Object.keys (objB);
+
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  // 第四关：比较两者的属性是否相等，值是否相等
+  for (let i = 0; i < keysA.length; i++) {
+    if (
+      !hasOwnProperty.call (objB, keysA [i]) ||
+      !is (objA [keysA [i]], objB [keysA [i]])
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// 调用 state.a.push("2")
+state: {a: ["1"]} -> state: {a: ["1", "2"]}
+但这终究还是浅层比较，a数组改变了，但是浅层数据还是没有改变。因为数组的引用没有变。一旦属性的值为引用类型的时候浅比较就失灵了。使用Immutable 数据流可以有效的避免这种情况。
 
 ## react的渲染机制
 

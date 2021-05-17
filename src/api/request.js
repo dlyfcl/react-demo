@@ -30,7 +30,7 @@ export const getSingerListRequest = (category, alpha, count) => {
  * 获取排行榜的内容
  */
 export const getRankListRequest = () => {
-  return axiosInstance.get (`/toplist/detail`);
+  return axiosInstance.get(`/toplist/detail`);
 };
 
 /**
@@ -38,5 +38,12 @@ export const getRankListRequest = () => {
  * @param id 歌单id 
  */
 export const getAlbumDetailRequest = id => {
-  return axiosInstance.get (`/playlist/detail?id=${id}`);
+  return axiosInstance.get(`/playlist/detail?id=${id}`);
+}
+
+/**
+ * 获取歌手详情
+ */
+export const getSingerDetail = id => {
+  return axiosInstance.get(`/artists?id=${id}`);
 }
