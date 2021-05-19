@@ -47,3 +47,9 @@ export const getAlbumDetailRequest = id => {
 export const getSingerDetail = id => {
   return axiosInstance.get(`/artists?id=${id}`);
 }
+
+export const playMode = {
+  sequence: 0,
+  loop: 1,
+  random: 2
+};
