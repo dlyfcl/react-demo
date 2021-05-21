@@ -12,6 +12,7 @@ const Player = (props) => {
     name: "木偶人",
     ar: [{ name: "薛之谦" }]
   }
+  
   return (
     <div>
       <NormalPlayer
