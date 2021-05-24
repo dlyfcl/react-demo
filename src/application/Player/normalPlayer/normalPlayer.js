@@ -8,6 +8,7 @@ import { CSSTransition } from 'react-transition-group';
 // 帧动画插件
 import animations from "create-keyframe-animation";
 import { prefixStyle } from "../../../api/utils";
+import ProgressBar from '../../../components/progressBar/progressBar'
 
 const NormalPlayer = (props) => {
   const { song, fullScreen } = props;
@@ -125,16 +126,13 @@ const NormalPlayer = (props) => {
           </CDWrapper>
         </Middle>
         <Bottom className="bottom">
-          {/* <ProgressWrapper>
-            <span className="time time-l">{formatPlayTime(currentTime)}</span>
+          <ProgressWrapper>
+            <span className="time time-l">0:00</span>
             <div className="progress-bar-wrapper">
-              <ProgressBar
-                percent={percent}
-                percentChange={onProgressChange}
-              ></ProgressBar>
+              <ProgressBar percent={0.2}></ProgressBar>
             </div>
-            <div className="time time-r">{formatPlayTime(duration)}</div>
-          </ProgressWrapper> */}
+            <div className="time time-r">4:17</div>
+          </ProgressWrapper>
           <Operators>
             <div className="icon i-left" >
               <i className="iconfont">&#xe625;</i>

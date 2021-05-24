@@ -17,8 +17,8 @@ export const NormalPlayerContainer = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  /* z-index: -1;
-  opacity: 0.6; */
+  /* z-index: -1;*/
+  /* opacity: 0.8;  */
   /* filter: blur(10px); */
   background: ${style["background-color"]};
   .background {
@@ -27,8 +27,8 @@ export const NormalPlayerContainer = styled.div`
     top: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
-    opacity: 0.6;
+    z-index: -1;
+    opacity: 0.5;
     filter: blur(20px);
     &.layer {
       background: ${style["font-color-desc"]};
@@ -182,7 +182,7 @@ export const ProgressWrapper = styled.div`
   .time {
     color: ${style["font-color-desc"]};
     font-size: ${style["font-size-s"]};
-    flex: 0 0 30px;
+    flex: 0 0 40px;
     line-height: 30px;
     width: 30px;
     &.time-l {
