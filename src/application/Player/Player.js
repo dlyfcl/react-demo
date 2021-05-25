@@ -6,13 +6,17 @@ import * as actionTypes from './store/actionCreators';
 
 const Player = (props) => {
   const { fullScreen } = props;
-  const { toggleFullScreenDispatch } = props;
+  const { toggleFullScreenDispatch, changeCurrentIndexDispatch } = props;
   const currentSong = {
     al: { picUrl: "https://p1.music.126.net/JL_id1CFwNJpzgrXwemh4Q==/109951164172892390.jpg" },
     name: "木偶人",
     ar: [{ name: "薛之谦" }]
   }
-  
+
+  useEffect(() => {
+    changeCurrentIndexDispatch(0);
+  }, [])
+
   return (
     <div>
       <NormalPlayer
@@ -36,7 +40,11 @@ const mapDispatchToProps = (dispatch) => {
     // 改变是否全局显示播放器的状态
     toggleFullScreenDispatch(data) {
       dispatch(actionTypes.changeFullScreen(data))
-    }
+    },
+    // 改变当前下标
+    changeCurrentIndexDispatch(index) {
+      dispatch(actionTypes.changeCurrentIndex(index))
+    },
   }
 }
 

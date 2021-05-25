@@ -11,6 +11,7 @@ import SongsList from '../../components/songsList/songsList';
 import { connect } from 'react-redux';
 import { getSingerInfo } from './singerStore/index';
 import Loading from '../../components/loading/loading';
+import MusicNote from "../../components/music-note/musicNote";
 
 const Singer = (props) => {
   const { singerInfo, loading, hotSongs } = props;
@@ -32,7 +33,6 @@ const Singer = (props) => {
    */
   const collectButton = useRef(); // 获取收藏按钮
   const imageWrapper = useRef();  // 获取顶部背景图
-  const songScrollWrapper = useRef();
   const songScroll = useRef();
   const headEl = useRef(); // 获取头部高度
   const layer = useRef();
@@ -58,7 +58,7 @@ const Singer = (props) => {
     } else if (Y >= minScrollY) {
       layerDOM.style.top = `${img_h - OFFSET - Math.abs(Y)}px`;
       layerDOM.style.zIndex = 1;
-      buttonDOM.style["transform"] = `translate3d(0, ${Y/5}px, 0)`;
+      buttonDOM.style["transform"] = `translate3d(0, ${Y / 5}px, 0)`;
       buttonDOM.style["opacity"] = `${1 - percent * 2}`;
       const nh = img_h - Math.abs(Y);
       imageDOM.style["height"] = `${nh}px`;
@@ -76,6 +76,10 @@ const Singer = (props) => {
     layer.current.style.top = `${h - OFFSET}px`;
     songScroll.current.refresh();
   }, []);
+  const musicNoteRef = useRef();
+  const musicAnimation = (x, y) => {
+    musicNoteRef.current.startAnimation({ x, y });
+  };
 
   const cont = () => {
     return (
@@ -99,11 +103,12 @@ const Singer = (props) => {
             <SongsList
               songs={artist.hotSongs}
               showCollect={false}
-              ref={songScrollWrapper}
+              musicAnimation={musicAnimation}
             >
             </SongsList>
           </Scroll>
         </SongListWrapper>
+        <MusicNote ref={musicNoteRef}></MusicNote>
         {loading ? <Loading></Loading> : null}
       </SingerContainer>
     )
