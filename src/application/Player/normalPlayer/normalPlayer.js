@@ -7,12 +7,12 @@ import {
 import { CSSTransition } from 'react-transition-group';
 // 帧动画插件
 import animations from "create-keyframe-animation";
-import { prefixStyle } from "../../../api/utils";
+import { prefixStyle, formatPlayTime } from "../../../api/utils";
 import ProgressBar from '../../../components/progressBar/progressBar'
 
 const NormalPlayer = (props) => {
-  const { song, fullScreen } = props;
-  const { toggleFullScreen } = props;
+  const { song, fullScreen, playing, percent, currentTime, duration } = props;
+  const { toggleFullScreen, clickPlaying } = props;
   const normalPlayerRef = useRef();
   const cdWrapperRef = useRef();
   // 判断浏览器类型，添加兼容性处理
@@ -127,11 +127,11 @@ const NormalPlayer = (props) => {
         </Middle>
         <Bottom className="bottom">
           <ProgressWrapper>
-            <span className="time time-l">0:00</span>
+            <span className="time time-l">{formatPlayTime(currentTime)}</span>
             <div className="progress-bar-wrapper">
               <ProgressBar percent={0.2}></ProgressBar>
             </div>
-            <div className="time time-r">4:17</div>
+            <div className="time time-r">{formatPlayTime(duration)}</div>
           </ProgressWrapper>
           <Operators>
             <div className="icon i-left" >
@@ -141,7 +141,13 @@ const NormalPlayer = (props) => {
               <i className="iconfont">&#xe6e1;</i>
             </div>
             <div className="icon i-center">
-              <i className="iconfont">&#xe723;</i>
+              <i
+                className="iconfont"
+                onClick={e => clickPlaying(e, !playing)}
+                dangerouslySetInnerHTML={{
+                  __html: playing ? "&#xe723;" : "&#xe731;"
+                }}
+              ></i>
             </div>
             <div className="icon i-right">
               <i className="iconfont">&#xe718;</i>

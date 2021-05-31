@@ -14,7 +14,7 @@ const Player = (props) => {
   } = props;
   const {
     toggleFullScreenDispatch,
-    changeCurrentIndexDispatch,
+    // changeCurrentIndexDispatch,
     togglePlayingDispatch,
     changeCurrentDispatch
   } = props;
@@ -54,11 +54,22 @@ const Player = (props) => {
     playing ? audioRef.current.play() : audioRef.current.pause();
   }, [playing])
 
+  // 播放器播放时触发的函数
+  const updateTime = e => {
+    // 获取播放的当前时间
+    setCurrentTime(e.target.currentTime);
+  };
+
   return (
     <div>
       { isEmptyObject(currentSong) ? null :
         <NormalPlayer
           song={currentSong}
+          playing={playing}
+          clickPlaying={clickPlaying}
+          percent={percent}
+          currentTime={currentTime}
+          duration={duration}
           toggleFullScreen={toggleFullScreenDispatch}
           fullScreen={fullScreen} />
       }
@@ -71,7 +82,8 @@ const Player = (props) => {
           playing={playing}
           percent={percent} />
       }
-      <audio ref={audioRef}></audio>
+      {/* audio标签在播放的过程中会不断地触发onTimeUpdate事件 */}
+      <audio ref={audioRef} onTimeUpdate={updateTime}></audio>
     </div>
   )
 }

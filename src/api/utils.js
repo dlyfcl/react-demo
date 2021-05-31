@@ -77,3 +77,10 @@ export const isEmptyObject = obj => {
   if (Object.keys(obj).length === 0) return true;
   return false;
 }
+
+export const formatPlayTime = time => {
+  time = time | 0;
+  const minute = (time / 60) | 0;
+  const second = (time % 60).toString().padStart(2, "0");
+  return `${minute}:${second}`;
+}

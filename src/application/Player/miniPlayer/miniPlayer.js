@@ -8,6 +8,7 @@ const MiniPlayer = (props) => {
   const { song, fullScreen, playing, percent } = props;
   const { toggleFullScreen, clickPlaying } = props;
   const miniPlayerRef = useRef();
+
   return (
     <CSSTransition
       in={!fullScreen}
@@ -31,14 +32,14 @@ const MiniPlayer = (props) => {
           <p className="desc">{getName(song.ar)}</p>
         </div>
         <div className="control">
-          {/* <i className="iconfont">&#xe650;</i> */}
           <div className="control">
             <ProgressCircle radius={32} percent={percent}>
-              { playing ?
-                <i className="icon-mini iconfont icon-pause" onClick={e => clickPlaying(e, false)}>&#xe650;</i>
-                :
-                <i className="icon-mini iconfont icon-play" onClick={e => clickPlaying(e, true)}>&#xe61e;</i>
-              }
+              <i className={`icon-mini iconfont icon-${playing ? "pause" : "play"}`}
+                onClick={e => clickPlaying(e, !playing)}
+                dangerouslySetInnerHTML={{
+                  __html: playing ? "&#xe650;" : "&#xe61e;"
+                }}>
+              </i>
             </ProgressCircle>
           </div>
         </div>
