@@ -11,7 +11,7 @@ import Loading from '../../components/loading/loading';
 
 const Album = (props) => {
   const id = props.match.params.id;
-  const { data, loading } = props;
+  const { data, loading, songsCount } = props;
   const { getAlbumDataDispatch } = props;
   useEffect(() => {
     changeLoading(true);
@@ -142,7 +142,7 @@ const Album = (props) => {
       appear={true}
       unmountOnExit
       onExited={props.history.goBack}>
-      <Container>
+      <Container play={songsCount}>
         <Header
           title={title}
           isMarquee={isMarquee}
@@ -169,6 +169,7 @@ const Album = (props) => {
 const mapStateToProps = (state) => ({
   data: state.getIn(['album', 'data']),
   loading: state.getIn(['album', 'loading']),
+  songsCount: state.getIn (['player', 'playList']).size,
 })
 
 const mapDispatchToProps = (dispatch) => {

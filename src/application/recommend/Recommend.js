@@ -15,7 +15,7 @@ import { renderRoutes } from 'react-router-config';
 
 
 function Recommend(props) {
-    const { bannerList, recommendList, enterLoading } = props;
+    const { bannerList, recommendList, enterLoading, songsCount } = props;
     const { getBannerDataDispatch, getRecommendListDataDispatch } = props;
     useEffect(() => {
         // 避免性能浪费
@@ -30,7 +30,7 @@ function Recommend(props) {
     const bannerListJS = bannerList ? bannerList.toJS() : [];
     const recommendListJS = recommendList ? recommendList.toJS() : [];
     return (
-        <Content>
+        <Content play={songsCount}>
             {enterLoading ? <Loading></Loading> : null}
             <Scroll className="list" onScroll={forceCheck}>
                 <div>
@@ -52,6 +52,7 @@ const mapStateToProps = (state) => ({
     bannerList: state.getIn(['recommend', 'bannerList']),
     recommendList: state.getIn(['recommend', 'recommendList']),
     enterLoading: state.getIn(['recommend', 'enterLoading']),
+    songsCount: state.getIn (['player', 'playList']).size,
 });
 
 // 映射 dispatch 到 props 上

@@ -8,7 +8,7 @@ import Scroll from '../../components/scroll/scroll';
 import { renderRoutes } from 'react-router-config';
 
 function Rank(props) {
-    const { rankList, loading } = props;
+    const { rankList, loading, songsCount } = props;
     const { getRankListDispatch } = props;
     const list = rankList ? rankList.toJS() : [];
     // 排行榜单分为两个部分，一部分是官方榜，另一部分是全球榜。
@@ -34,7 +34,7 @@ function Rank(props) {
         props.history.push(`/rank/${item.id}`);
     }
     return (
-        <RankContainer>
+        <RankContainer play={songsCount}>
             <Scroll direction={'vertical'}>
                 <div>
                     <span className="title"> 官方榜 </span>
@@ -80,6 +80,7 @@ function Rank(props) {
 const mapStateToProps = (state) => ({
     rankList: state.getIn(['rank', 'rankList']),
     loading: state.getIn(['rank', 'loading']),
+    songsCount: state.getIn(['player', 'playList']).size,
 })
 
 const mapDispatchToProps = (dispatch) => {

@@ -35,6 +35,7 @@ const ProgressBarWrapper = styled.div`
   }
 `
 const ProgressBar = (props) => {
+  const { percent } = props;
   const progressBar = useRef();
   const progress = useRef();
   const progressBtn = useRef();
@@ -46,6 +47,11 @@ const ProgressBar = (props) => {
     progress.current.style.width = `${offsetWidth}px`;
     progressBtn.current.style.transform = `translate3d(${offsetWidth}px, 0, 0)`;
   }
+
+  useEffect(() => {
+    _offset(progressBar.current.clientWidth * percent);
+  }, [percent]);
+
 
   const progressTouchStart = (e) => {
     const startTouch = {};

@@ -15,7 +15,9 @@ import { renderRoutes } from 'react-router-config';
 
 function Singer(props) {
     // 数据
-    const { singerList, pageCount, enterLoading, bottomLoading, topLoading, alpha, category } = props;
+    const { singerList, pageCount, enterLoading,
+        bottomLoading, topLoading, alpha, category,
+        songsCount } = props;
     // 函数
     const { getHotDataDispatch, updateDispatch, pullUpRefreshDispatch, pullDownRefreshDispatch, updateAlpha, updateCategory } = props;
     // let [category, setCategory] = useState('');
@@ -80,7 +82,7 @@ function Singer(props) {
         <NavContainer>
             <Horizen list={categoryTypes} title={'分类（默认热门）:'} oldVal={category} handleClick={categoryClick} ></Horizen>
             <Horizen list={alphaTypes} title={'首字母:'} oldVal={alpha} handleClick={alphaClick} ></Horizen>
-            <ListContainer>
+            <ListContainer play={songsCount}>
                 <Scroll direction={'vertical'}
                     pullUp={handlePullUp}
                     pullDown={handlePullDown}
@@ -91,7 +93,7 @@ function Singer(props) {
                     {renderSingerList()}
                 </Scroll>
                 {enterLoading ? <Loading></Loading> : null}
-                { renderRoutes (props.route.routes) }
+                {renderRoutes(props.route.routes)}
             </ListContainer>
         </NavContainer>
     )
@@ -105,6 +107,7 @@ const mapStateToProps = (state) => ({
     topLoading: state.getIn(['singer', 'topLoading']),
     alpha: state.getIn(['singer', 'alpha']),
     category: state.getIn(['singer', 'category']),
+    songsCount: state.getIn(['player', 'playList']).size,
 })
 
 const mapDispatchToProps = (dispatch) => {

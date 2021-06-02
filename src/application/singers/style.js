@@ -14,7 +14,7 @@ export const ListContainer = styled.div`
   position: fixed;
   top: 160px;
   left: 0;
-  bottom: 0;
+  bottom: ${props => props.play > 0 ? "60px" : 0};
   overflow: hidden;
   width: 100%;
 `;
@@ -109,8 +109,8 @@ export const CollectButton = styled.div`
   height: 40px;
   margin-top: -55px;
   z-index:50;
-  background: ${style ["theme-color"]};
-  color: ${style ["font-color-light"]};
+  background: ${style["theme-color"]};
+  color: ${style["font-color-light"]};
   border-radius: 20px;
   text-align: center;
   font-size: 0;
@@ -133,7 +133,7 @@ export const SongListWrapper = styled.div`
   z-index: 50;
   top: 40%;
   left: 0;
-  bottom: 0;
+  bottom: ${props => props.play > 0 ? "60px" : 0};
   right: 0;
   >div {
     position: absolute;

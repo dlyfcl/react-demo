@@ -129,7 +129,7 @@ const NormalPlayer = (props) => {
           <ProgressWrapper>
             <span className="time time-l">{formatPlayTime(currentTime)}</span>
             <div className="progress-bar-wrapper">
-              <ProgressBar percent={0.2}></ProgressBar>
+              <ProgressBar percent={percent}></ProgressBar>
             </div>
             <div className="time time-r">{formatPlayTime(duration)}</div>
           </ProgressWrapper>

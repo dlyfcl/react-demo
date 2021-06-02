@@ -14,7 +14,7 @@ import Loading from '../../components/loading/loading';
 import MusicNote from "../../components/music-note/musicNote";
 
 const Singer = (props) => {
-  const { singerInfo, loading, hotSongs } = props;
+  const { singerInfo, loading, hotSongs, songsCount } = props;
   const { getSingerInfoDispatch } = props;
   const [showStatus, setShowStatus] = useState(true);
   const handleBack = useCallback(() => {
@@ -98,7 +98,7 @@ const Singer = (props) => {
           <span className="text"> 收藏 </span>
         </CollectButton>
         <BgLayer ref={layer}></BgLayer>
-        <SongListWrapper>
+        <SongListWrapper play={songsCount}>
           <Scroll onScroll={handleScroll} ref={songScroll}>
             <SongsList
               songs={artist.hotSongs}
@@ -133,6 +133,7 @@ const mapStateToProps = (state) => ({
   singerInfo: state.getIn(['singer_info', 'singerInfo']),
   loading: state.getIn(['singer_info', 'loading']),
   hotSongs: state.getIn(['singer_info', 'hotSongs']),
+  songsCount: state.getIn(['player', 'playList']).size,
 })
 
 const mapDispatchToProps = (dispatch) => {
