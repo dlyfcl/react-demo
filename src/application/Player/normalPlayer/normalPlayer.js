@@ -11,8 +11,21 @@ import { prefixStyle, formatPlayTime } from "../../../api/utils";
 import ProgressBar from '../../../components/progressBar/progressBar'
 
 const NormalPlayer = (props) => {
-  const { song, fullScreen, playing, percent, currentTime, duration } = props;
-  const { toggleFullScreen, clickPlaying } = props;
+  const { 
+    song, 
+    fullScreen, 
+    playing, 
+    percent, 
+    currentTime, 
+    duration,
+    currentIndex
+  } = props;
+  const { 
+    toggleFullScreen, 
+    clickPlaying,
+    changeCurrentIndexClick,
+    onProgressChange
+  } = props;
   const normalPlayerRef = useRef();
   const cdWrapperRef = useRef();
   // 判断浏览器类型，添加兼容性处理
@@ -86,6 +99,7 @@ const NormalPlayer = (props) => {
     // 不置为 none 现在全屏播放器页面还是存在
     normalPlayerRef.current.style.display = "none";
   };
+
   return (
     <CSSTransition
       classNames="normal"
@@ -129,15 +143,15 @@ const NormalPlayer = (props) => {
           <ProgressWrapper>
             <span className="time time-l">{formatPlayTime(currentTime)}</span>
             <div className="progress-bar-wrapper">
-              <ProgressBar percent={percent}></ProgressBar>
+              <ProgressBar percent={percent} percentChange={onProgressChange}></ProgressBar>
             </div>
             <div className="time time-r">{formatPlayTime(duration)}</div>
           </ProgressWrapper>
           <Operators>
-            <div className="icon i-left" >
+            <div className="icon i-left">
               <i className="iconfont">&#xe625;</i>
             </div>
-            <div className="icon i-left">
+            <div className="icon i-left" onClick={() => changeCurrentIndexClick(currentIndex - 1)}>
               <i className="iconfont">&#xe6e1;</i>
             </div>
             <div className="icon i-center">
@@ -149,7 +163,7 @@ const NormalPlayer = (props) => {
                 }}
               ></i>
             </div>
-            <div className="icon i-right">
+            <div className="icon i-right" onClick={() => changeCurrentIndexClick(currentIndex + 1)}>
               <i className="iconfont">&#xe718;</i>
             </div>
             <div className="icon i-right">

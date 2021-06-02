@@ -35,7 +35,8 @@ const ProgressBarWrapper = styled.div`
   }
 `
 const ProgressBar = (props) => {
-  const { percent } = props;
+  const { percent } = props; // 进度
+  const { percentChange } = props; // 进度的变化
   const progressBar = useRef();
   const progress = useRef();
   const progressBtn = useRef();
@@ -49,8 +50,18 @@ const ProgressBar = (props) => {
   }
 
   useEffect(() => {
-    _offset(progressBar.current.clientWidth * percent);
+    // touch.initiated 为true的时候说明正在拖动
+    if (percent >= 0 && percent <= 1 && !touch.initiated) {
+      _offset(progressBar.current.clientWidth * percent);
+    }
   }, [percent]);
+  
+
+  const _percentChange = () => {
+    const barWidth = progressBar.current.clientWidth - progressBtnWidth;
+    const barPercent = progress.current.clientWidth / barWidth;
+    percentChange(barPercent);
+  }
 
 
   const progressTouchStart = (e) => {
@@ -75,12 +86,14 @@ const ProgressBar = (props) => {
     // 改变touch状态，停止滑动
     endTouch.initiated = false;
     setTouch(endTouch);
+    _percentChange();
   }
 
   const progressClick = (e) => {
     const rect = progressBar.current.getBoundingClientRect();
     const offsetWidth = e.pageX - rect.left;
     _offset(offsetWidth);
+    _percentChange();
   };
 
   return (

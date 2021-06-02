@@ -14,7 +14,7 @@ const Player = (props) => {
   } = props;
   const {
     toggleFullScreenDispatch,
-    // changeCurrentIndexDispatch,
+    changeCurrentIndexDispatch,
     togglePlayingDispatch,
     changeCurrentDispatch
   } = props;
@@ -37,7 +37,9 @@ const Player = (props) => {
   const audioRef = useRef();
 
   useEffect(() => {
-    if (playList.length === 0 || currentIndex === -1) return;
+    if (playList.length === 0
+      || currentIndex === -1 ||
+      !playList[currentIndex]) return;
     let current = playList[currentIndex];
     changeCurrentDispatch(current); //赋值currentSong
     audioRef.current.src = getSongUrl(current.id);
@@ -60,6 +62,16 @@ const Player = (props) => {
     setCurrentTime(e.target.currentTime);
   };
 
+  // 拖动进度条改变歌曲播放进度
+  const onProgressChange = (curPercent) => {
+    const newTime = curPercent * duration;
+    setCurrentTime(newTime);
+    audioRef.current.currentTime = newTime;
+    if (!playing) {
+      togglePlayingDispatch(true);
+    }
+  }
+
   return (
     <div>
       { isEmptyObject(currentSong) ? null :
@@ -70,7 +82,10 @@ const Player = (props) => {
           percent={percent}
           currentTime={currentTime}
           duration={duration}
+          currentIndex={currentIndex}
+          changeCurrentIndexClick={changeCurrentIndexDispatch}
           toggleFullScreen={toggleFullScreenDispatch}
+          onProgressChange={onProgressChange}
           fullScreen={fullScreen} />
       }
       { isEmptyObject(currentSong) ? null :
