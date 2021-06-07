@@ -8,23 +8,26 @@ import { CSSTransition } from 'react-transition-group';
 // 帧动画插件
 import animations from "create-keyframe-animation";
 import { prefixStyle, formatPlayTime } from "../../../api/utils";
-import ProgressBar from '../../../components/progressBar/progressBar'
+import ProgressBar from '../../../components/progressBar/progressBar';
+import { playMode } from '../../../api/config';
 
 const NormalPlayer = (props) => {
-  const { 
-    song, 
-    fullScreen, 
-    playing, 
-    percent, 
-    currentTime, 
+  const {
+    song,
+    fullScreen,
+    playing,
+    percent,
+    currentTime,
     duration,
-    currentIndex
+    mode
   } = props;
-  const { 
-    toggleFullScreen, 
+  const {
+    toggleFullScreen,
     clickPlaying,
-    changeCurrentIndexClick,
-    onProgressChange
+    onProgressChange,
+    handlePrev,
+    handleNext,
+    changeMode
   } = props;
   const normalPlayerRef = useRef();
   const cdWrapperRef = useRef();
@@ -100,6 +103,19 @@ const NormalPlayer = (props) => {
     normalPlayerRef.current.style.display = "none";
   };
 
+  //getPlayMode方法
+  const getPlayMode = () => {
+    let content;
+    if (mode === playMode.sequence) {
+      content = "&#xe625;";
+    } else if (mode === playMode.loop) {
+      content = "&#xe653;";
+    } else {
+      content = "&#xe61b;";
+    }
+    return content;
+  };
+
   return (
     <CSSTransition
       classNames="normal"
@@ -148,10 +164,13 @@ const NormalPlayer = (props) => {
             <div className="time time-r">{formatPlayTime(duration)}</div>
           </ProgressWrapper>
           <Operators>
-            <div className="icon i-left">
-              <i className="iconfont">&#xe625;</i>
+            <div className="icon i-left" onClick={changeMode}>
+              <i
+                className="iconfont"
+                dangerouslySetInnerHTML={{ __html: getPlayMode() }}
+              ></i>
             </div>
-            <div className="icon i-left" onClick={() => changeCurrentIndexClick(currentIndex - 1)}>
+            <div className="icon i-left" onClick={handlePrev}>
               <i className="iconfont">&#xe6e1;</i>
             </div>
             <div className="icon i-center">
@@ -163,7 +182,7 @@ const NormalPlayer = (props) => {
                 }}
               ></i>
             </div>
-            <div className="icon i-right" onClick={() => changeCurrentIndexClick(currentIndex + 1)}>
+            <div className="icon i-right" onClick={handleNext}>
               <i className="iconfont">&#xe718;</i>
             </div>
             <div className="icon i-right">
