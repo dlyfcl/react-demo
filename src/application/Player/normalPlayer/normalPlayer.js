@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getName } from '../../../api/utils';
 import {
   NormalPlayerContainer, Top,
@@ -10,6 +10,7 @@ import animations from "create-keyframe-animation";
 import { prefixStyle, formatPlayTime } from "../../../api/utils";
 import ProgressBar from '../../../components/progressBar/progressBar';
 import { playMode } from '../../../api/config';
+import Toast from "../../../components/Toast/Toast";
 
 const NormalPlayer = (props) => {
   const {
@@ -116,6 +117,19 @@ const NormalPlayer = (props) => {
     return content;
   };
 
+  let timer = null;
+
+  const [toastShow, setToastShow] = useState(false);
+  useEffect(() => {
+    if (!fullScreen) return;
+    setToastShow(true);
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      setToastShow(false);
+      clearTimeout(timer);
+    }, 3000)
+  },[mode])
+
   return (
     <CSSTransition
       classNames="normal"
@@ -190,6 +204,7 @@ const NormalPlayer = (props) => {
             </div>
           </Operators>
         </Bottom>
+        <Toast mode={mode} toastShow={toastShow}></Toast>
       </NormalPlayerContainer>
     </CSSTransition>
 
