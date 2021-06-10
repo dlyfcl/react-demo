@@ -6,7 +6,7 @@ import ProgressCircle from '../../../components/circle/progress-circle'
 
 const MiniPlayer = (props) => {
   const { song, fullScreen, playing, percent } = props;
-  const { toggleFullScreen, clickPlaying } = props;
+  const { toggleFullScreen, clickPlaying, togglePlayList } = props;
   const miniPlayerRef = useRef();
 
   return (
@@ -43,7 +43,7 @@ const MiniPlayer = (props) => {
             </ProgressCircle>
           </div>
         </div>
-        <div className="control">
+        <div className="control" onClick={() => togglePlayList(true)}>
           <i className="iconfont">&#xe640;</i>
         </div>
       </MiniPlayerContainer>

@@ -5,8 +5,10 @@ import { connect } from 'react-redux';
 import * as actionTypes from './store/actionCreators';
 import { getSongUrl, isEmptyObject, findIndex, shuffle } from '../../api/utils'
 import { playMode } from '../../api/config';
+import SongList from './SongList/SongList'
 
 const Player = (props) => {
+  // 变量
   const { fullScreen,
     playing,
     currentIndex,
@@ -15,13 +17,15 @@ const Player = (props) => {
     mode,//播放模式
     sequencePlayList: immutableSequencePlayList,//顺序列表
   } = props;
+  // 方法函数
   const {
     toggleFullScreenDispatch,
     changeCurrentIndexDispatch,
     togglePlayingDispatch,
     changeCurrentDispatch,
     changeModeDispatch,
-    changePlayListDispatch
+    changePlayListDispatch,
+    togglePlayListDispatch
   } = props;
 
   const playList = immutablePlayList.toJS();
@@ -134,8 +138,9 @@ const Player = (props) => {
   }
 
   const handleError = () => {
-    audioRef.current = true;
+    setSongReady(true);
     alert("播放出错");
+    handleNext();
   };
 
   // 改变播放模式
@@ -174,6 +179,7 @@ const Player = (props) => {
           handlePrev={handlePrev}
           handleNext={handleNext}
           mode={mode}
+          togglePlayList={togglePlayListDispatch}
           changeMode={changeMode}
           fullScreen={fullScreen} />
       }
@@ -184,6 +190,7 @@ const Player = (props) => {
           fullScreen={fullScreen}
           clickPlaying={clickPlaying}
           playing={playing}
+          togglePlayList={togglePlayListDispatch}
           percent={percent} />
       }
       {/* audio标签在播放的过程中会不断地触发onTimeUpdate事件 */}
@@ -191,6 +198,7 @@ const Player = (props) => {
         onError={handleError}
         onTimeUpdate={updateTime}
         onEnded={handleEnd}></audio>
+      <SongList></SongList>
     </div>
   )
 }
@@ -230,6 +238,10 @@ const mapDispatchToProps = (dispatch) => {
     // 改变播放列表
     changePlayListDispatch(data) {
       dispatch(actionTypes.changePlayList(data));
+    },
+     // 控制播放列表是否显示
+     togglePlayListDispatch(data) {
+      dispatch(actionTypes.changeShowPlayList(data));
     },
   }
 }

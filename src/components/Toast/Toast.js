@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
-
 import styled from 'styled-components';
 
 const ToastContainer = styled.div`
@@ -30,9 +29,6 @@ const ToastContainer = styled.div`
 const Toast = (props) => {
   const { mode, toastShow } = props;
   const toastRef = useRef();
-  const afterLeave = () => {
-
-  }
 
   return (
     <CSSTransition
@@ -42,7 +38,6 @@ const Toast = (props) => {
       mountOnEnter
       appear={true}
       unmountOnExit
-      onExited={afterLeave}
     >
       <ToastContainer ref={toastRef}>
         {mode === 0 ? '顺序循环' : mode === 1 ? '单曲循环' : '随机播放'}
