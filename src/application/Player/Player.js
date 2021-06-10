@@ -85,21 +85,28 @@ const Player = (props) => {
   // 歌曲播放结束之后
   const handleEnd = () => {
     if (mode === playMode.loop) handleLoop();
-     else handleNext();
+    else handleNext();
   }
+
+  // 判断歌曲是否准备就绪
+  const [songReady, setSongReady] = useState(true);
 
   useEffect(() => {
     if (!playList.length
       || currentIndex === -1 ||
       !playList[currentIndex] ||
-      playList[currentIndex].id === preSong.id) return;
+      playList[currentIndex].id === preSong.id || !songReady) return;
     let current = playList[currentIndex];
     changeCurrentDispatch(current); //赋值currentSong
     setPreSong(current);
+    // 把标志位置为 false, 表示现在新的资源没有缓冲完成，不能切歌
+    setSongReady(false); 
     audioRef.current.src = getSongUrl(current.id);
     // 用来异步
     setTimeout(() => {
-      audioRef.current.play();
+      audioRef.current.play().then(() => {
+        setSongReady(true);
+      });
     });
     togglePlayingDispatch(true); //播放状态
     setCurrentTime(0); //从头开始播放
@@ -125,6 +132,11 @@ const Player = (props) => {
       togglePlayingDispatch(true);
     }
   }
+
+  const handleError = () => {
+    audioRef.current = true;
+    alert("播放出错");
+  };
 
   // 改变播放模式
   const changeMode = () => {
@@ -175,7 +187,10 @@ const Player = (props) => {
           percent={percent} />
       }
       {/* audio标签在播放的过程中会不断地触发onTimeUpdate事件 */}
-      <audio ref={audioRef} onTimeUpdate={updateTime} onEnded={handleEnd}></audio>
+      <audio ref={audioRef}
+        onError={handleError}
+        onTimeUpdate={updateTime}
+        onEnded={handleEnd}></audio>
     </div>
   )
 }

@@ -53,3 +53,7 @@ export const playMode = {
   loop: 1,
   random: 2
 };
+
+export const getLyricRequest = id => {
+  return axiosInstance.get(`/lyric?id=${id}`);
+};
