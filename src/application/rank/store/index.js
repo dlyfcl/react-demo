@@ -16,14 +16,13 @@ export const getRankList = () => {
   return dispatch => {
     getRankListRequest().then(data => {
       let list = data && data.list;
-      // console.log(list);
       dispatch(changeRankList(list));
       dispatch(changeLoading(false));
     })
   }
 }
 
-const changeLoading = (data) => ({
+export const changeLoading = (data) => ({
   type: CHANGE_LOADING,
   data
 })

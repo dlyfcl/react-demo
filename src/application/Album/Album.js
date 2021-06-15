@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Container, TopDesc, Menu, SongList, SongItem } from './style';
+import { Container, TopDesc, Menu, SongItem } from './style';
 import { CSSTransition } from 'react-transition-group';
 import Header from '../../components/Header/Header';
 import Scroll from '../../components/scroll/scroll';
@@ -8,6 +8,8 @@ import style from "../../assets/global-style";
 import { connect } from 'react-redux';
 import { getAlbumDeta, changeLoading } from './store/index';
 import Loading from '../../components/loading/loading';
+import SongsList from '../../components/songsList/songsList';
+import MusicNote from "../../components/music-note/musicNote";
 
 const Album = (props) => {
   const id = props.match.params.id;
@@ -75,39 +77,10 @@ const Album = (props) => {
       </Menu>
     )
   }
-  const songListRender = () => {
-    return (
-      <SongList>
-        <div className="first_line">
-          <div className="play_all">
-            <i className="iconfont">&#xe6e3;</i>
-            <span > 播放全部 <span className="sum">(共 {currentAlbum.tracks.length} 首)</span></span>
-          </div>
-          <div className="add_list">
-            <i className="iconfont">&#xe62d;</i>
-            <span > 收藏 ({getCount(currentAlbum.subscribedCount)})</span>
-          </div>
-        </div>
-        <SongItem>
-          {
-            currentAlbum.tracks.map((item, index) => {
-              return (
-                <li key={index}>
-                  <span className="index">{index + 1}</span>
-                  <div className="info">
-                    <span>{item.name}</span>
-                    <span>
-                      {getName(item.ar)} - {item.al.name}
-                    </span>
-                  </div>
-                </li>
-              )
-            })
-          }
-        </SongItem>
-      </SongList>
-    )
-  }
+  const musicNoteRef = useRef();
+  const musicAnimation = (x, y) => {
+    musicNoteRef.current.startAnimation({ x, y });
+  };
   const topDescRender = () => {
     return (
       <TopDesc background={currentAlbum.coverImgUrl}>
@@ -155,7 +128,13 @@ const Album = (props) => {
               <div>
                 {topDescRender()}
                 {menuRender()}
-                {songListRender()}
+                <SongsList
+                  songs={currentAlbum.tracks}
+                  showCollect={true}
+                  musicAnimation={musicAnimation}
+                >
+                </SongsList>
+                <MusicNote ref={musicNoteRef}></MusicNote>
               </div>
             </Scroll>
           )
@@ -169,7 +148,7 @@ const Album = (props) => {
 const mapStateToProps = (state) => ({
   data: state.getIn(['album', 'data']),
   loading: state.getIn(['album', 'loading']),
-  songsCount: state.getIn (['player', 'playList']).size,
+  songsCount: state.getIn(['player', 'playList']).size,
 })
 
 const mapDispatchToProps = (dispatch) => {

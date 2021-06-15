@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { RankContainer, TopContainer,BottomItem, BottomContainer, TopItem, SongList } from './style';
-import { getRankList } from './store/index';
+import { RankContainer, TopContainer, BottomItem, BottomContainer, TopItem, SongList } from './style';
+import { getRankList, changeLoading } from './store/index';
 import { connect } from 'react-redux';
 import { arrayFilter } from '../../api/utils';
 import Scroll from '../../components/scroll/scroll';
-// import Loading from '../../components/loading/loading';
+import Loading from '../../components/loading/loading';
 import { renderRoutes } from 'react-router-config';
 
 function Rank(props) {
@@ -36,41 +36,44 @@ function Rank(props) {
     return (
         <RankContainer play={songsCount}>
             <Scroll direction={'vertical'}>
-                <div>
-                    <span className="title"> 官方榜 </span>
-                    <TopContainer>
-                        {
-                            officialList.map((item) => {
-                                return (
-                                    <TopItem key={item.coverImgId} tracks={item.tracks} onClick={() => enterDetail(item)}>
-                                        <div className="img_wrapper">
-                                            <img src={item.coverImgUrl} alt="" />
-                                            <div className="decorate"></div>
-                                            <span className="update_frequecy">{item.updateFrequency}</span>
-                                        </div>
-                                        { renderSongList(item.tracks)}
-                                    </TopItem>
-                                )
-                            })
-                        }
-                    </TopContainer>
-                    <span className="title"> 全球榜 </span>
-                    <BottomContainer>
-                        {
-                            globalList.map((item) => {
-                                return (
-                                    <BottomItem key={item.id} tracks={item.tracks}>
-                                        <div className="img_wrapper">
-                                            <img src={item.coverImgUrl} alt="" />
-                                            <div className="decorate"></div>
-                                            <span className="update_frequecy">{item.updateFrequency}</span>
-                                        </div>
-                                    </BottomItem>
-                                )
-                            })
-                        }
-                    </BottomContainer>
-                </div>
+                {loading ? <Loading></Loading> :
+                    <div>
+                        <span className="title"> 官方榜 </span>
+                        <TopContainer>
+                            {
+                                officialList.map((item) => {
+                                    return (
+                                        <TopItem key={item.coverImgId} tracks={item.tracks} onClick={() => enterDetail(item)}>
+                                            <div className="img_wrapper">
+                                                <img src={item.coverImgUrl} alt="" />
+                                                <div className="decorate"></div>
+                                                <span className="update_frequecy">{item.updateFrequency}</span>
+                                            </div>
+                                            {renderSongList(item.tracks)}
+                                        </TopItem>
+                                    )
+                                })
+                            }
+                        </TopContainer>
+                        <span className="title"> 全球榜 </span>
+                        <BottomContainer>
+                            {
+                                globalList.map((item) => {
+                                    return (
+                                        <BottomItem key={item.id} tracks={item.tracks} onClick={() => enterDetail(item)}>
+                                            <div className="img_wrapper">
+                                                <img src={item.coverImgUrl} alt="" />
+                                                <div className="decorate"></div>
+                                                <span className="update_frequecy">{item.updateFrequency}</span>
+                                            </div>
+                                        </BottomItem>
+                                    )
+                                })
+                            }
+                        </BottomContainer>
+                    </div>
+                }
+
             </Scroll>
             {renderRoutes(props.route.routes)}
         </RankContainer>
