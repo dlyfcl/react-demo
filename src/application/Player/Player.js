@@ -156,7 +156,7 @@ const Player = (props) => {
       changePlayListDispatch(sequencePlayList);
     } else if (newMode === 2) {
       //随机播放
-      let newList = shuffle(sequencePlayList);
+      let newList = shuffle(sequencePlayList); // 生成一个随机的新数组
       let index = findIndex(currentSong, newList);
       changePlayListDispatch(newList); // 设置新的播放列表
       changeCurrentIndexDispatch(index);
@@ -198,7 +198,7 @@ const Player = (props) => {
         onError={handleError}
         onTimeUpdate={updateTime}
         onEnded={handleEnd}></audio>
-      <SongList></SongList>
+      <SongList changeMode={changeMode}></SongList>
     </div>
   )
 }

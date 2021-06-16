@@ -68,3 +68,30 @@ export const ListContainer = styled.div`
     }
   }
 `;
+
+export const ListHeader = styled.div `
+  position: relative;
+  padding: 20px 30px 10px 20px;
+  .title{
+    display: flex;
+    align-items: center;
+    >div{
+      flex:1;
+      .text{
+        flex: 1;
+        font-size: ${style["font-size-m"]};
+        color: ${style["font-color-desc"]};
+      }
+    }
+    .iconfont {
+      margin-right: 10px;
+      font-size: ${style["font-size-ll"]};
+      color: ${style["theme-color"]};
+    }
+
+    .clear{
+      ${style.extendClick()}
+      font-size: ${style["font-size-l"]};
+    }
+  }
+`

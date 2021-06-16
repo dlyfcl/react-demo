@@ -131,6 +131,7 @@ const Album = (props) => {
                 <SongsList
                   songs={currentAlbum.tracks}
                   showCollect={true}
+                  collectCount={currentAlbum.subscribedCount}
                   musicAnimation={musicAnimation}
                 >
                 </SongsList>

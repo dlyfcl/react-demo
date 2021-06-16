@@ -99,6 +99,7 @@ export const getRandomInt = (min, max) => {
 }
 
 export const shuffle = arr => {
+  // 深拷贝数组
   let new_arr = [];
   arr.forEach(item => {
     new_arr.push(item);

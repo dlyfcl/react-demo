@@ -1,6 +1,6 @@
 import React from 'react';
 import { SongList, SongItem } from './style';
-import { getCount, getName } from '../../api/utils'
+import { getName } from '../../api/utils'
 import { changePlayList, changeCurrentIndex, changeSequecePlayList } from './../../application/Player/store/actionCreators';
 import { connect } from 'react-redux';
 
@@ -26,7 +26,7 @@ const SongsList = React.forwardRef((props, ref) => {
     return (
       <div className="add_list">
         <i className="iconfont">&#xe62d;</i>
-        <span> 收藏 ({getCount(count)})</span>
+        <span>收藏({Math.floor(count/1000)/10}万)</span>
       </div>
     )
   }
