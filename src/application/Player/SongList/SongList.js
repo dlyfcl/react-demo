@@ -2,18 +2,29 @@ import React, { useRef, useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import { PlayListContainer, ScrollWrapper, ListContainer, ListHeader } from './style';
 import { CSSTransition } from 'react-transition-group';
-import { changeShowPlayList, changePlayMode, changeCurrentIndex, deleteSong } from '../store/actionCreators';
+import { 
+  changeShowPlayList, 
+  changePlayMode, 
+  changeCurrentIndex, 
+  deleteSong,
+  changePlayList,
+  changeSequecePlayList,
+  changePlayingState,
+  changeCurrentSong
+} from '../store/actionCreators';
 import { getName } from '../../../api/utils';
 import { playMode } from './../../../api/config';
 import { prefixStyle } from '../../../api/utils';
+import { Modal } from 'antd-mobile';
 
 const SongList = (props) => {
   const { playList, showPlayList, mode, currentSong: immutableCurrentSong, currentIndex } = props;
-  const { 
+  const {
     changeMode,
     togglePlayListDispatch,
     changeCurrentIndexDispatch,
-    deleteSongDispatch
+    deleteSongDispatch,
+    deleteAllSongDispatch
   } = props;
   const songList = playList.size > 0 ? playList.toJS() : [];
   const currentSong = immutableCurrentSong.toJS();
@@ -93,14 +104,25 @@ const SongList = (props) => {
     deleteSongDispatch(item);
   }
 
+  // 删除所有歌曲 弹出确定提示框
+  const deleteAllSong = () => {
+    Modal.alert("删除", "是否删除所有歌曲", [
+      { text: 'Cancel', onPress: () => { }, style: 'default' },
+      {
+        text: 'OK', onPress: () =>
+          new Promise((resolve) => {
+            deleteAllSongDispatch()
+            resolve()
+          }),
+      },
+    ])
+  }
 
   return (
     <CSSTransition
       in={showPlayList}
       timeout={300}
       classNames="list-fade"
-      // appear={true}
-      // unmountOnExit
       onEnter={onEnterCB}
       onEntering={onEnteringCB}
       onExit={onExitCB}
@@ -113,8 +135,7 @@ const SongList = (props) => {
           <ListHeader>
             <h1 className="title">
               {getPlayMode()}
-              <span className="iconfont clear">&#xe63d;</span>
-              {/* onClick={handleShowClear} */}
+              <span className="iconfont clear" onClick={() => deleteAllSong()}>&#xe63d;</span>
             </h1>
           </ListHeader>
           <ScrollWrapper>
@@ -173,6 +194,15 @@ const mapDispatchToProps = (dispatch) => {
     // 删除歌曲
     deleteSongDispatch(song) {
       dispatch(deleteSong(song));
+    },
+    // 删除所有歌曲
+    deleteAllSongDispatch() {
+      dispatch(changePlayList([])); // 置空顺序播放列表
+      dispatch(changeSequecePlayList([])); // 置空随机播放列表
+      dispatch(changeCurrentIndex(-1)); // 置空当前播放歌曲下标
+      dispatch(changeShowPlayList(false)); // 隐藏列表页面
+      dispatch(changeCurrentSong({})); // 置空当前歌曲
+      dispatch(changePlayingState(false)); // 暂停歌曲播放
     }
   }
 }
