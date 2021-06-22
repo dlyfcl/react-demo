@@ -104,7 +104,7 @@ const Player = (props) => {
     changeCurrentDispatch(current); //赋值currentSong
     setPreSong(current);
     // 把标志位置为 false, 表示现在新的资源没有缓冲完成，不能切歌
-    setSongReady(false); 
+    setSongReady(false);
     audioRef.current.src = getSongUrl(current.id);
     // 用来异步
     setTimeout(() => {
@@ -166,7 +166,7 @@ const Player = (props) => {
 
   return (
     <div>
-      { isEmptyObject(currentSong) ? null :
+      {isEmptyObject(currentSong) ? null :
         <NormalPlayer
           song={currentSong}
           playing={playing}
@@ -183,7 +183,7 @@ const Player = (props) => {
           changeMode={changeMode}
           fullScreen={fullScreen} />
       }
-      { isEmptyObject(currentSong) ? null :
+      {isEmptyObject(currentSong) ? null :
         <MiniPlayer
           song={currentSong}
           toggleFullScreen={toggleFullScreenDispatch}
@@ -198,7 +198,7 @@ const Player = (props) => {
         onError={handleError}
         onTimeUpdate={updateTime}
         onEnded={handleEnd}></audio>
-      <SongList changeMode={changeMode}></SongList>
+      <SongList changeMode={changeMode} fullScreen={fullScreen} clearPreSong={setPreSong.bind(null, {})}></SongList>
     </div>
   )
 }
@@ -239,8 +239,8 @@ const mapDispatchToProps = (dispatch) => {
     changePlayListDispatch(data) {
       dispatch(actionTypes.changePlayList(data));
     },
-     // 控制播放列表是否显示
-     togglePlayListDispatch(data) {
+    // 控制播放列表是否显示
+    togglePlayListDispatch(data) {
       dispatch(actionTypes.changeShowPlayList(data));
     },
   }

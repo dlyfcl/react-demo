@@ -2,32 +2,36 @@ import React, { useRef, useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import { PlayListContainer, ScrollWrapper, ListContainer, ListHeader } from './style';
 import { CSSTransition } from 'react-transition-group';
-import { 
-  changeShowPlayList, 
-  changePlayMode, 
-  changeCurrentIndex, 
+import {
+  changeShowPlayList,
+  changePlayMode,
+  changeCurrentIndex,
   deleteSong,
   changePlayList,
   changeSequecePlayList,
   changePlayingState,
-  changeCurrentSong
+  changeCurrentSong,
+  changeFullScreen
 } from '../store/actionCreators';
 import { getName } from '../../../api/utils';
 import { playMode } from './../../../api/config';
 import { prefixStyle } from '../../../api/utils';
 import { Modal } from 'antd-mobile';
+import Scroll from '../../../components/scroll/scroll';
 
 const SongList = (props) => {
-  const { playList, showPlayList, mode, currentSong: immutableCurrentSong, currentIndex } = props;
+  const { playList, showPlayList, mode, fullScreen, currentSong: immutableCurrentSong, currentIndex } = props;
   const {
     changeMode,
     togglePlayListDispatch,
     changeCurrentIndexDispatch,
     deleteSongDispatch,
-    deleteAllSongDispatch
+    deleteAllSongDispatch,
+    clearPreSong
   } = props;
   const songList = playList.size > 0 ? playList.toJS() : [];
   const currentSong = immutableCurrentSong.toJS();
+  const [canTouch,setCanTouch] = useState(true); // 是否可以触摸滚动
 
 
   // 获取播放模式
@@ -111,11 +115,28 @@ const SongList = (props) => {
       {
         text: 'OK', onPress: () =>
           new Promise((resolve) => {
-            deleteAllSongDispatch()
-            resolve()
+            sureDeleteAllSong();
+            resolve();
           }),
       },
     ])
+  }
+
+  // 确定删除所有歌曲
+  const sureDeleteAllSong = () => {
+    deleteAllSongDispatch();
+    clearPreSong();
+  }
+
+  // 页面滚动发生的事件
+  const handleScroll = useCallback((pos) => {
+    const state = pos.y === 0; // 判断是否处于顶部
+    setCanTouch(state); // 判断是否能够开启触摸滑动事件
+  }, [])
+
+  // 滑动开始
+  const handleTouchStart = (e) => {
+
   }
 
   return (
@@ -130,8 +151,12 @@ const SongList = (props) => {
       onExited={onExitedCB}
     >
       <PlayListContainer
-        style={contShow === true ? { display: "block" } : { display: "none" }} onClick={() => togglePlayListDispatch(false)}>
-        <div className="list_wrapper" ref={listWrapperRef} onClick={e => e.stopPropagation()}>
+        style={contShow === true ? { display: "block" } : { display: "none" }} fullScreen={fullScreen} onClick={() => togglePlayListDispatch(false)}>
+        <div
+          className="list_wrapper"
+          ref={listWrapperRef}
+          onClick={e => e.stopPropagation()}
+          onTouchStart={handleTouchStart}>
           <ListHeader>
             <h1 className="title">
               {getPlayMode()}
@@ -139,24 +164,27 @@ const SongList = (props) => {
             </h1>
           </ListHeader>
           <ScrollWrapper>
-            <ListContainer>
-              {
-                songList.map((item, index) => {
-                  return (
-                    <li className="item" key={item.id} onClick={() => songClick(index)}>
-                      {getCurrentIcon(item)}
-                      <span className="text">{item.name} - {getName(item.ar)}</span>
-                      <span className="like">
-                        <i className="iconfont">&#xe601;</i>
-                      </span>
-                      <span className="delete" onClick={(e) => deleteSong(e, item)}>
-                        <i className="iconfont">&#xe63d;</i>
-                      </span>
-                    </li>
-                  )
-                })
-              }
-            </ListContainer>
+            <Scroll bounceTop={false} onScroll={handleScroll}>
+              <ListContainer>
+                {
+                  songList.map((item, index) => {
+                    return (
+                      <li className="item" key={item.id} onClick={() => songClick(index)}>
+                        {getCurrentIcon(item)}
+                        <span className="text">{item.name} - {getName(item.ar)}</span>
+                        <span className="like">
+                          <i className="iconfont">&#xe601;</i>
+                        </span>
+                        <span className="delete" onClick={(e) => deleteSong(e, item)}>
+                          <i className="iconfont">&#xe63d;</i>
+                        </span>
+                      </li>
+                    )
+                  })
+                }
+              </ListContainer>
+            </Scroll>
+
           </ScrollWrapper>
         </div>
       </PlayListContainer>
@@ -203,6 +231,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(changeShowPlayList(false)); // 隐藏列表页面
       dispatch(changeCurrentSong({})); // 置空当前歌曲
       dispatch(changePlayingState(false)); // 暂停歌曲播放
+      dispatch(changeFullScreen(false)); // 取消全屏
     }
   }
 }

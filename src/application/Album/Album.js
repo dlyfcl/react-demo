@@ -1,9 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Container, TopDesc, Menu, SongItem } from './style';
+import { Container, TopDesc, Menu } from './style';
 import { CSSTransition } from 'react-transition-group';
 import Header from '../../components/Header/Header';
 import Scroll from '../../components/scroll/scroll';
-import { getCount, getName } from '../../api/utils'
 import style from "../../assets/global-style";
 import { connect } from 'react-redux';
 import { getAlbumDeta, changeLoading } from './store/index';

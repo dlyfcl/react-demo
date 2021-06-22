@@ -26,7 +26,7 @@ export const PlayListContainer = styled.div`
   .list_wrapper {
     position: absolute;
     left: 0;
-    bottom: 0;
+    bottom: ${props => props.fullScreen ? 0 : '60px'};
     width: 100%;
     opacity: 1;
     border-radius: 10px 10px 0 0;
