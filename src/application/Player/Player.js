@@ -7,6 +7,7 @@ import { getSongUrl, isEmptyObject, findIndex, shuffle } from '../../api/utils'
 import { playMode } from '../../api/config';
 import SongList from './SongList/SongList';
 import { getLyricRequest } from '../../api/request';
+import Lyric from '../../api/lyric-parse';
 
 const Player = (props) => {
   // 变量
@@ -172,6 +173,8 @@ const Player = (props) => {
     getLyricRequest(id).then(data => {
       console.log(data);
       lyric = data.lrc && data.lrc.lyric;
+      const newLyric = new Lyric(lyric);
+      console.log(newLyric);
     })
   }
 
