@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import * as actionTypes from './store/actionCreators';
 import { getSongUrl, isEmptyObject, findIndex, shuffle } from '../../api/utils'
 import { playMode } from '../../api/config';
-import SongList from './SongList/SongList'
+import SongList from './SongList/SongList';
+import { getLyricRequest } from '../../api/request';
 
 const Player = (props) => {
   // 变量
@@ -105,6 +106,7 @@ const Player = (props) => {
     setPreSong(current);
     // 把标志位置为 false, 表示现在新的资源没有缓冲完成，不能切歌
     setSongReady(false);
+    getSongWord(current.id);
     audioRef.current.src = getSongUrl(current.id);
     // 用来异步
     setTimeout(() => {
@@ -163,6 +165,15 @@ const Player = (props) => {
     }
     changeModeDispatch(newMode);
   };
+
+  // 正在播放歌曲的歌词
+  const getSongWord = id => {
+    let lyric = "";
+    getLyricRequest(id).then(data => {
+      console.log(data);
+      lyric = data.lrc && data.lrc.lyric;
+    })
+  }
 
   return (
     <div>

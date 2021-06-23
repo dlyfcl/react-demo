@@ -43,37 +43,47 @@ const Singer = (props) => {
   const img_h = imageDOM ? imageWrapper.current.offsetHeight : 0;
   // handleScroll 作为一个传给子组件的方法，
   // 我们需要用 useCallback 进行包裹，防止不必要的重渲染。
+  const initialHeight = useRef(0);
   const handleScroll = useCallback((pos) => {
-    const Y = pos.y;
-    const layerDOM = layer.current;
+    let height = initialHeight.current;
+    const newY = pos.y;
+    const imageDOM = imageWrapper.current;
     const buttonDOM = collectButton.current;
-    const percent = Math.abs(Y / img_h);
-    const min = -(img_h - OFFSET) + headerHeight;
-    const minScrollY = JSON.parse(JSON.stringify(min));
-    if (Y > 0) {
+    const layerDOM = layer.current;
+    const headerDOM = headEl.current;
+    const minScrollY = -(height - OFFSET) + 45;
+    const percent = Math.abs(newY / height);
+    if (newY > 0) {
+      //处理往下拉的情况,效果：图片放大，按钮跟着偏移
       imageDOM.style["transform"] = `scale(${1 + percent})`;
-      layerDOM.style.top = `${img_h - OFFSET + Y}px`;
-      buttonDOM.style["transform"] = `translate3d(0, ${Y}px, 0)`;
-      imageDOM.style["height"] = "40%";
-    } else if (Y >= minScrollY) {
-      layerDOM.style.top = `${img_h - OFFSET - Math.abs(Y)}px`;
+      buttonDOM.style["transform"] = `translate3d(0, ${newY}px, 0)`;
+      layerDOM.style.top = `${height - OFFSET + newY}px`;
+    } else if (newY >= minScrollY) {
+      //往上滑动，但是还没超过Header部分
+      layerDOM.style.top = `${height - OFFSET - Math.abs(newY)}px`;
       layerDOM.style.zIndex = 1;
-      buttonDOM.style["transform"] = `translate3d(0, ${Y / 5}px, 0)`;
+      imageDOM.style.paddingTop = "75%";
+      imageDOM.style.height = 0;
+      imageDOM.style.zIndex = -1;
+      buttonDOM.style["transform"] = `translate3d(0, ${newY}px, 0)`;
       buttonDOM.style["opacity"] = `${1 - percent * 2}`;
-      const nh = img_h - Math.abs(Y);
-      imageDOM.style["height"] = `${nh}px`;
-      imageDOM.style.zIndex = 1;
-    } else if (Y < minScrollY) {
-      layerDOM.style.top = `${headerHeight - OFFSET}px`;
+    } else if (newY < minScrollY) {
+      //往上滑动，但是超过Header部分
+      layerDOM.style.top = `${45 - OFFSET}px`;
       layerDOM.style.zIndex = 1;
-      imageDOM.style["height"] = "45px";
+      //防止溢出的歌单内容遮住Header
+      headerDOM.style.zIndex = 100;
+      //此时图片高度与Header一致
+      imageDOM.style.height = `45px`;
+      imageDOM.style.paddingTop = 0;
       imageDOM.style.zIndex = 99;
     }
-  }, [artist])
+  })
 
   useEffect(() => {
     let h = imageWrapper.current.offsetHeight;
     layer.current.style.top = `${h - OFFSET}px`;
+    initialHeight.current = h;
     songScroll.current.refresh();
   }, []);
   const musicNoteRef = useRef();

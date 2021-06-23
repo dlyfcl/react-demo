@@ -9,6 +9,7 @@ export const SongList = styled.div`
     padding: 10px 0;
     margin-left: 10px;
     position: relative;
+    margin-top: 10px;
     justify-content: space-between;
     border-bottom: 1px solid ${style["border-color"]};
     .play_all {

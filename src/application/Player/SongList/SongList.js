@@ -165,6 +165,7 @@ const SongList = (props) => {
       listWrapperRef.current.style["transition"] = "all 0.3s";
       listWrapperRef.current.style[transform] = `translate3d(0px, 0px, 0px)`;
     }
+    setDistance(0);
   }
 
   return (

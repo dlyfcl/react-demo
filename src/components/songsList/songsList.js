@@ -48,7 +48,7 @@ const SongsList = React.forwardRef((props, ref) => {
       <div className="first_line">
         <div className="play_all">
           <i className="iconfont">&#xe6e3;</i>
-          <span > 播放全部 <span className="sum">(共 {totalCount} 首)</span></span>
+          <span> 播放全部 <span className="sum">(共 {totalCount} 首)</span></span>
         </div>
         {showCollect ? collect(collectCount) : null}
       </div>

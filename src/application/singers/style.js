@@ -55,17 +55,16 @@ export const ListItem = styled.div`
 `;
 
 export const SingerContainer = styled.div`
-  background: #fff;
-  width: 100%;
-  height: 100%;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  transform-origin: right bottom;
+  bottom: ${props => props.play > 0 ? "60px" : 0};
+  width: 100%;
   z-index: 100;
   overflow: hidden;
+  background: #f2f3f4;
+  transform-origin: right bottom;
   &.fly-enter, &.fly-appear {
     transform: rotateZ(30deg) translate3d(100%, 0, 0);
   }
@@ -83,13 +82,14 @@ export const SingerContainer = styled.div`
 `
 
 export const ImgContainer = styled.div`
+  position: relative;
   width: 100%;
-  height: 40%;
-  /* padding-top: 75%; */
+  height: 0;
+  padding-top: 75%;
+  transform-origin: top;
   background: url(${props => props.bgUrl});
   background-size: cover;
-  position: relative;
-  transform-origin: top;
+  z-index: 50;
   .filter {
     position: absolute;
     top: 0px;
@@ -102,7 +102,8 @@ export const ImgContainer = styled.div`
 
 export const CollectButton = styled.div`
   position: absolute;
-  left: 0; right: 0;
+  left: 0; 
+  right: 0;
   margin: auto;
   box-sizing: border-box;
   width: 120px;
