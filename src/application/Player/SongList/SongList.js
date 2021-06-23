@@ -134,9 +134,37 @@ const SongList = (props) => {
     setCanTouch(state); // 判断是否能够开启触摸滑动事件
   }, [])
 
-  // 滑动开始
-  const handleTouchStart = (e) => {
+  const [startY, setStartY] = useState(null);  // 滑动的开始的位置
+  const [distance, setDistance] = useState(0); // 滑动的距离
+  const [initialed, setInitialed] = useState(false);
 
+  // 滑动开始
+  const handleTouchStart = e => {
+    if (!canTouch || initialed) return;
+    listWrapperRef.current.style["transition"] = "";
+    setStartY(e.nativeEvent.touches[0].pageY);
+    setDistance(0);
+    setInitialed(true);
+  }
+
+  // 滑动过程中
+  const handleTouchMove = e => {
+    if (!canTouch || !initialed) return;
+    const distance = e.nativeEvent.touches[0].pageY - startY;
+    if (distance < 0) return;
+    setDistance(distance);
+    listWrapperRef.current.style.transform = `translate3d(0, ${distance}px, 0)`;
+  }
+
+  // 滑动结束
+  const handleTouchEnd = e => {
+    setInitialed(false);
+    if(distance >= 150) {
+      togglePlayListDispatch(false);
+    } else {
+      listWrapperRef.current.style["transition"] = "all 0.3s";
+      listWrapperRef.current.style[transform] = `translate3d(0px, 0px, 0px)`;
+    }
   }
 
   return (
@@ -156,7 +184,9 @@ const SongList = (props) => {
           className="list_wrapper"
           ref={listWrapperRef}
           onClick={e => e.stopPropagation()}
-          onTouchStart={handleTouchStart}>
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}>
           <ListHeader>
             <h1 className="title">
               {getPlayMode()}
