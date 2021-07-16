@@ -170,10 +170,12 @@ const Player = (props) => {
     changeModeDispatch(newMode);
   };
 
+
+  const [currentPlayingLyric, setPlayingLyric] = useState("");
   const handleLyric = ({lineNum, txt}) => {
     if (!currentLyric.current) return;
     currentLineNum.current = lineNum;
-    // setPlayingLyric (txt);
+    setPlayingLyric (txt);
   };
 
   // 正在播放歌曲的歌词
@@ -192,7 +194,10 @@ const Player = (props) => {
       currentLyric.current.play();
       currentLineNum.current = 0;  // 歌词处于第一行
       currentLyric.current.seek(0); // 歌词从最初时间开始播放
-    })
+    }).catch (() => {
+      songReady.current = true;
+      audioRef.current.play();
+    });
   }
 
   return (
