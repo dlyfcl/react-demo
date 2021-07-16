@@ -11,6 +11,7 @@
     "better-scroll": "^2.0.0-beta.10",
     "create-keyframe-animation": "^0.1.0",
     "immutable": "^4.0.0-rc.12",
+    "lrc-file-parser": "^1.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-lazyload": "^3.2.0",

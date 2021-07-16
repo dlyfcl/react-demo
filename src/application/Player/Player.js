@@ -43,6 +43,9 @@ const Player = (props) => {
   const currentSong = immutableCurrentSong.toJS();
   const sequencePlayList = immutableSequencePlayList.toJS();
 
+  const currentLyric = useRef();
+  const currentLineNum = useRef(0);  // 当前歌词位于行数的下标index
+
   const clickPlaying = (e, state) => {
     e.stopPropagation();
     togglePlayingDispatch(state);
@@ -107,7 +110,7 @@ const Player = (props) => {
     setPreSong(current);
     // 把标志位置为 false, 表示现在新的资源没有缓冲完成，不能切歌
     setSongReady(false);
-    getSongWord(current.id);
+    getLyric(current.id);
     audioRef.current.src = getSongUrl(current.id);
     // 用来异步
     setTimeout(() => {
@@ -167,14 +170,28 @@ const Player = (props) => {
     changeModeDispatch(newMode);
   };
 
+  const handleLyric = ({lineNum, txt}) => {
+    if (!currentLyric.current) return;
+    currentLineNum.current = lineNum;
+    // setPlayingLyric (txt);
+  };
+
   // 正在播放歌曲的歌词
-  const getSongWord = id => {
+  const getLyric = id => {
     let lyric = "";
+    if (currentLyric.current) {
+      currentLyric.current.stop();
+    }
     getLyricRequest(id).then(data => {
-      console.log(data);
       lyric = data.lrc && data.lrc.lyric;
-      const newLyric = new Lyric(lyric);
-      console.log(newLyric);
+      if (!lyric) {
+        currentLyric.current = null;
+        return;
+      }
+      currentLyric.current = new Lyric(lyric, handleLyric);
+      currentLyric.current.play();
+      currentLineNum.current = 0;  // 歌词处于第一行
+      currentLyric.current.seek(0); // 歌词从最初时间开始播放
     })
   }
 
@@ -224,7 +241,7 @@ const mapSteteToProps = (state) => ({
   currentSong: state.getIn(["player", "currentSong"]), // 正在播放的歌曲
   playList: state.getIn(["player", "playList"]), // 播放的歌曲列表
   mode: state.getIn(["player", "mode"]), // 播放模式
-  sequencePlayList: state.getIn(["player", "sequencePlayList"])
+  sequencePlayList: state.getIn(["player", "sequencePlayList"]),
 })
 
 const mapDispatchToProps = (dispatch) => {
@@ -257,6 +274,10 @@ const mapDispatchToProps = (dispatch) => {
     togglePlayListDispatch(data) {
       dispatch(actionTypes.changeShowPlayList(data));
     },
+    // 改变播放速率
+    // changeSpeedDispatch(data) {
+    //   dispatch(actionTypes.changeSpeed(data));
+    // }
   }
 }
 

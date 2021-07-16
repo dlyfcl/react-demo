@@ -1,41 +1,65 @@
-const timeExp = /\[(\d{2,}):(\d{2})(?:[\.\:](\d{2,3}))?]/g
+// 解析 [00:01.997] 这一类时间戳的正则表达式
+const timeExp = /\[(\d{2,}):(\d{2})(?:\.(\d{2,3}))?]/g
+
 const STATE_PAUSE = 0
 const STATE_PLAYING = 1
+
 export default class Lyric {
-    constructor(lrc, hanlder = () => { }, speed = 1) {
-        this.lrc = lrc
-        this.lines = []
-        this.state = STATE_PAUSE
-        this.offset = 0
-        this.speed = speed
-        this.handler = hanlder
-        this.dealData()
+    /**
+     * @params {string} lrc
+     * @params {function} handler
+    */
+    constructor(lrc, hanlder = () => { }) {
+        this.lrc = lrc;
+        this.lines = [];// 这是解析后的数组，每一项包含对应的歌词和时间
+        this.handler = hanlder;// 回调函数
+        this.state = STATE_PAUSE;// 播放状态
+        this.curLineIndex = 0;// 当前播放歌词所在的行数
+        this.startStamp = 0;// 歌曲开始的时间戳
+
+        this._initLines();
     }
-
-    // init() {
-    //     this.dealData();
-    // }
-
-    dealData() {
-        const lineList = this.lrc.split("\n");
-        lineList.forEach(item => {
-            const result = timeExp.exec(item);
-            if (!result) return;
-            const txt = item.replace(timeExp, "").trim();
-            if (!txt) return;
-            this.lines.push({
-                time: result[1] * 60 * 1000 + result[2] * 1000 + (result[3] || 0),
-                txt
-            })
-        });
-        this.lines.map(e => {
-            e.time = parseInt(e.time);
-            return e;
-        })
-        // 根据时间排序
+    // 解析代码
+    _initLines() {
+        const lines = this.lrc.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];// 如 "[00:01.997] 作词：薛之谦"
+            let result = timeExp.exec(line);
+            if (!result) continue;
+            const txt = line.replace(timeExp, '').trim();// 现在把时间戳去掉，只剩下歌词文本
+            if (txt) {
+                if (result[3].length === 3) {
+                    result[3] = result[3] / 10;//[00:01.997] 中匹配到的 997 就会被切成 99
+                }
+                this.lines.push({
+                    time: result[1] * 60 * 1000 + result[2] * 1000 + (result[3] || 0) * 10,// 转化具体到毫秒的时间，result [3] * 10 可理解为 (result / 100) * 1000
+                    txt
+                });
+            }
+        }
         this.lines.sort((a, b) => {
             return a.time - b.time;
-        });
+        });// 根据时间排序
+    }
+
+    play(offset = 0, isSeek = false) {
+        if (!this.lines.length) {
+            return;
+        }
+        this.state = STATE_PLAYING;
+        // 找到当前所在的行
+        this.curLineIndex = this._findcurLineIndex(offset);
+        // 现在正处于第 this.curLineIndex-1 行
+        // 立即定位，方式是调用传来的回调函数，并把当前歌词信息传给它
+        this._callHandler(this.curLineIndex - 1);
+        // 根据时间进度判断歌曲开始的时间戳
+        this.startStamp = +new Date() - offset;
+
+        if (this.curLineIndex < this.lines.length) {
+            clearTimeout(this.timer);
+            // 继续播放
+            this._playRest(isSeek);
+        }
     }
 
     _findcurLineIndex(time) {
@@ -47,43 +71,6 @@ export default class Lyric {
         return this.lines.length - 1
     }
 
-    /**
-     * 开始播放
-     * @param {number} offset: 时间进度;
-     * @param {boolean} isSeek: 是否拖动进度条 
-     */
-    play(offset = 0, isSeek = false) {
-        if (!this.lines.length) return;
-        this.state = STATE_PLAYING
-        this.curLineIndex = this._findcurLineIndex(offset)
-        this.offset = offset
-        this.startStamp = +new Date() - offset
-        this._callHandler(this.curLineIndex - 1)
-        if (this.curLineIndex < this.lines.length) {
-            clearTimeout(this.timer);
-            // 继续播放
-            this._playRest(isSeek);
-        }
-    }
-
-    _playRest(isSeek = false) {
-        let line = this.lines[this.curLineIndex]
-        let delay;
-        if (isSeek) {
-            delay = line.time - (+new Date() - this.startStamp);
-        } else {
-            //拿到上一行的歌词开始时间，算间隔
-            let preTime = this.lines[this.curLineIndex - 1] ? this.lines[this.curLineIndex - 1].time : 0;
-            delay = line.time - preTime;
-        }
-        this.timer = setTimeout(() => {
-            this._callHandler(this.curLineIndex++)
-            if (this.curLineIndex < this.lines.length && this.state === STATE_PLAYING) {
-                this._playRest()
-            }
-        }, (delay / this.speed))
-    }
-
     _callHandler(i) {
         if (i < 0) {
             return
@@ -92,5 +79,46 @@ export default class Lyric {
             txt: this.lines[i].txt,
             lineNum: i
         })
+    }
+
+    // 继续播放
+    //isSeek 标志位表示用户是否手动调整进度
+    _playRest(isSeek = false) {
+        let line = this.lines[this.curLineIndex];
+        let delay;
+        if (isSeek) {
+            delay = line.time - (+new Date() - this.startStamp);
+        } else {
+            // 拿到上一行的歌词开始时间，算间隔
+            let preTime = this.lines[this.curLineIndex - 1] ? this.lines[this.curLineIndex - 1].time : 0;
+            delay = line.time - preTime;
+        }
+        this.timer = setTimeout(() => {
+            this._callHandler(this.curLineIndex++);
+            if (this.curLineIndex < this.lines.length && this.state === STATE_PLAYING) {
+                this._playRest();
+            }
+        }, delay)
+    }
+
+    // 两个状态切换：暂停和播放
+    // 歌曲暂停 (播放) 的时候，歌词也应该相应地暂停 (播放)。
+    togglePlay(offset) {
+        if (this.state === STATE_PLAYING) {
+            this.stop()
+        } else {
+            this.state = STATE_PLAYING
+            this.play(offset, true)
+        }
+    }
+
+    stop() {
+        this.state = STATE_PAUSE
+        clearTimeout(this.timer)
+    }
+
+    // 切到某个时间点播放
+    seek(offset) {
+        this.play(offset, true)
     }
 }
