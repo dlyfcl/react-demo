@@ -47,6 +47,22 @@ export const NormalPlayerContainer = styled.div`
     transform: translate3d(0, 100%, 0);
     transition: all .4s
   }
+  .fade-enter {
+    opacity: 0;
+  }
+  .fade-enter-active {
+    opacity: 1;
+    transition: all 0.4s;
+  }
+  .fade-enter-done {
+    transition: none;
+  }
+  .fade-exit-active {
+    opacity: 0;
+  }
+  .fade-exit-done {
+    opacity: 0;
+  }
 `
 
 export const Top = styled.div`
@@ -125,7 +141,10 @@ export const CDWrapper = styled.div`
     }
   }
   .playing_lyric {
-    margin-top: 20px;
+    position: absolute;
+    margin: auto;
+    width: 100%;
+    top: 82vw;
     font-size: 14px;
     line-height: 20px;
     white-space: normal;
@@ -194,5 +213,37 @@ export const ProgressWrapper = styled.div`
   }
   .progress-bar-wrapper {
     flex: 1;
+  }
+`;
+
+export const LyricContainer = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  /* 遮罩 会有模糊效果，看个人喜欢*/
+  /* mask-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,hsla(0,0%,100%,0)),color-stop(10%,hsla(0,0%,100%,.6)),color-stop(25%,#fff),color-stop(75%,#fff),color-stop(85%,hsla(0,0%,100%,.6)),to(hsla(0,0%,100%,0)));
+  mask-image: linear-gradient(linear,left top,left bottom,color-stop(0,hsla(0,0%,100%,0)),color-stop(10%,hsla(0,0%,100%,.6)),color-stop(25%,#fff),color-stop(75%,#fff),color-stop(85%,hsla(0,0%,100%,.6)),to(hsla(0,0%,100%,0))); */
+`;
+export const LyricWrapper = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  p {
+    line-height: 32px;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: normal;
+    font-size: ${style["font-size-l"]};
+    &.current {
+      color: #fff;
+    }
+    &.pure{
+      position: relative;
+      top: 30vh;
+    }
   }
 `;

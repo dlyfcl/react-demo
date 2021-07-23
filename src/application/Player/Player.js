@@ -43,12 +43,18 @@ const Player = (props) => {
   const currentSong = immutableCurrentSong.toJS();
   const sequencePlayList = immutableSequencePlayList.toJS();
 
-  const currentLyric = useRef();
+  const currentLyric = useRef();  // 赋值为lyric插件
   const currentLineNum = useRef(0);  // 当前歌词位于行数的下标index
 
+  // 点击播放暂停按钮
   const clickPlaying = (e, state) => {
     e.stopPropagation();
     togglePlayingDispatch(state);
+    // 根据歌曲的播放状态切换歌词的显示状态
+    if (currentLyric.current) {
+      // currentTime 播放的当前时间
+      currentLyric.current.togglePlay(currentTime*1000);
+    }
   };
 
   const audioRef = useRef();
@@ -133,13 +139,17 @@ const Player = (props) => {
     setCurrentTime(e.target.currentTime);
   };
 
-  // 拖动进度条改变歌曲播放进度
+  // 拖动进度条改变歌曲播放进度 歌曲进度的更新
   const onProgressChange = (curPercent) => {
     const newTime = curPercent * duration;
     setCurrentTime(newTime);
     audioRef.current.currentTime = newTime;
     if (!playing) {
       togglePlayingDispatch(true);
+    }
+    // 根据进度条的改变切换到歌词对应的时间点
+    if (currentLyric.current) {
+      currentLyric.current.seek(newTime * 1000);
     }
   }
 
@@ -170,12 +180,12 @@ const Player = (props) => {
     changeModeDispatch(newMode);
   };
 
-
+  // 当前播放歌曲的即时歌词
   const [currentPlayingLyric, setPlayingLyric] = useState("");
-  const handleLyric = ({lineNum, txt}) => {
+  const handleLyric = ({ lineNum, txt }) => {
     if (!currentLyric.current) return;
     currentLineNum.current = lineNum;
-    setPlayingLyric (txt);
+    setPlayingLyric(txt);
   };
 
   // 正在播放歌曲的歌词
@@ -194,7 +204,7 @@ const Player = (props) => {
       currentLyric.current.play();
       currentLineNum.current = 0;  // 歌词处于第一行
       currentLyric.current.seek(0); // 歌词从最初时间开始播放
-    }).catch (() => {
+    }).catch(() => {
       songReady.current = true;
       audioRef.current.play();
     });
@@ -217,7 +227,14 @@ const Player = (props) => {
           mode={mode}
           togglePlayList={togglePlayListDispatch}
           changeMode={changeMode}
-          fullScreen={fullScreen} />
+          fullScreen={fullScreen}
+          // 正在播放的歌曲的歌词
+          currentLyric={currentLyric.current}
+          // 当前播放歌曲的即时歌词
+          currentPlayingLyric={currentPlayingLyric}
+          // 当前歌词位于行数的下标
+          currentLineNum={currentLineNum.current}
+        />
       }
       {isEmptyObject(currentSong) ? null :
         <MiniPlayer
